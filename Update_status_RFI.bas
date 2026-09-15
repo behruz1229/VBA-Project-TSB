@@ -1,235 +1,308 @@
-Attribute VB_Name = "Update_status_RFI"
 Option Explicit
 
+' =====================================================================
+' РњРђРљР РћРЎ: Update_status_RFI
+' РќР°Р·РЅР°С‡РµРЅРёРµ: РћР±РЅРѕРІР»РµРЅРёРµ СЃС‚РѕР»Р±С†РѕРІ P, Q, R РІ РїСЂРёС‘РјРЅРёРєРµ РЅР° РѕСЃРЅРѕРІРµ РёСЃС‚РѕС‡РЅРёРєР°.
+' РљР»СЋС‡: РЎС‚РѕР»Р±РµС† O (РїСЂРёС‘РјРЅРёРє) -> РЎС‚РѕР»Р±РµС† D (РёСЃС‚РѕС‡РЅРёРє).
+' РњР°РїРїРёРЅРі: РСЃС‚РѕС‡РЅРёРє C -> РџСЂРёС‘РјРЅРёРє P, AG -> Q, AH -> R.
+' =====================================================================
+
 Sub Update_status_RFI()
-    '-----------------------------------------------------------------------
-    ' ОПТИМИЗИРОВАННАЯ ВЕРСИЯ (ИСПРАВЛЕНО ЧТЕНИЕ ИСТОЧНИКА)
-    ' Макрос обновляет столбцы Q и R в активной книге (лист "База данных по элементам")
-    ' на основе данных из выбранного файла (лист "Инспекции").
-    ' Сопоставление: столбец P (приёмник) <-> столбец C (источник)
-    ' Обновление: Q <- AG, R <- AH
-    '-----------------------------------------------------------------------
+    ' --- РћР‘РЄРЇР’Р›Р•РќРРЇ Р РљРћРќРЎРўРђРќРўР« ---
+    ' <--- РР—РњР•РќРРўР• РџРЈРўР¬ РќРђ РђРљРўРЈРђР›Р¬РќР«Р™ (РѕСЃС‚Р°РІСЊС‚Рµ СЃР»СЌС€ РІ РєРѕРЅС†Рµ)
+    Const DEFAULT_SRC_FOLDER As String = "\\vls.lan\ULVZG-DFS\РџРўРЎ\1.14. РўРЎР‘ Рё РњРћРў_РСЃРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ РґРѕРєСѓРјРµРЅС‚Р°С†РёСЏ РљРњ\Р’С‹РіСЂСѓР·РєРё\RFI\"
+    Const FILE_MASK As String = "РРЅСЃРїРµРєС†РёРё РЅР°*.xlsx"
+    Const DEST_SHEET_NAME As String = "Р‘Р°Р·Р° РґР°РЅРЅС‹С… РїРѕ СЌР»РµРјРµРЅС‚Р°Рј"
+    Const SRC_SHEET_NAME As String = "РРЅСЃРїРµРєС†РёРё"
     
-    Dim wbReceiver As Workbook
-    Dim wsReceiver As Worksheet
-    Dim lastRowReceiver As Long
-    Dim recArr As Variant
-    Dim i As Long
-    Dim dict As Object
-    Dim sourceFilePath As Variant
-    Dim wbSource As Workbook
-    Dim wsSource As Worksheet
-    Dim lastRowSource As Long
-    Dim srcArr As Variant
-    Dim wasAlreadyOpen As Boolean
-    Dim updateCountQ As Long
-    Dim updateCountR As Long
-    Dim processedCount As Long
-    Dim recalcState As XlCalculation
-    Dim screenUpdState As Boolean
-    Dim eventsState As Boolean
-    Dim startTime As Double
-    Dim elapsed As Double
-    Dim statusInterval As Long
+    Dim wbDest As Workbook, wsDest As Worksheet
+    Dim wbSrc As Workbook, wsSrc As Worksheet
+    Dim srcFilePath As Variant
+    Dim dictP As Object, dictQ As Object, dictR As Object
+    Dim key As String
+    Dim lastRowDest As Long, lastRowSrc As Long
+    Dim arrDest As Variant, arrSrc As Variant
+    Dim i As Long, srcRows As Long, destRows As Long
+    Dim startTime As Double, phaseStart As Double
+    Dim elapsed As Double, remaining As Double
+    Dim lastPct As Long, currentPct As Long, phaseNum As Long
+    Dim phaseDesc As String
     
+    ' РџРµСЂРµРјРµРЅРЅС‹Рµ РґР»СЏ РїРѕРёСЃРєР° С„Р°Р№Р»Р°
+    Dim fileName As String, newestFile As String
+    Dim newestDate As Date
+    
+    ' РџРµСЂРµРјРµРЅРЅС‹Рµ РґР»СЏ Р·РЅР°С‡РµРЅРёР№
+    Dim vKey As Variant, vC As Variant, vAG As Variant, vAH As Variant
+    Dim valC As String, valAG As String, valAH As String
+    Dim existingP As String, existingQ As String, existingR As String
+    
+    ' --- РРќРР¦РРђР›РР—РђР¦РРЇ ---
     startTime = Timer
-    
-    ' --- 1. Проверка активной книги ---
-    Set wbReceiver = ActiveWorkbook
-    If wbReceiver.Name = "PERSONAL.XLSB" Then
-        MsgBox "Пожалуйста, активируйте нужную книгу (приёмник) перед запуском макроса.", vbExclamation, "Ошибка"
-        Exit Sub
-    End If
-    
-    ' --- 2. Настройка листа-приёмника ---
-    On Error Resume Next
-    Set wsReceiver = wbReceiver.Worksheets("База данных по элементам")
-    On Error GoTo 0
-    If wsReceiver Is Nothing Then
-        MsgBox "В активной книге не найден лист 'База данных по элементам'.", vbCritical, "Ошибка"
-        Exit Sub
-    End If
-    
-    lastRowReceiver = wsReceiver.Cells(wsReceiver.Rows.Count, 1).End(xlUp).Row
-    If lastRowReceiver < 3 Then
-        MsgBox "В листе 'База данных по элементам' нет данных (строки начинаются с 3).", vbInformation, "Выход"
-        Exit Sub
-    End If
-    
-    ' --- 3. Чтение приёмника в массив (P, Q, R) ---
-    recArr = wsReceiver.Range("P3:R" & lastRowReceiver).Value2
-    processedCount = UBound(recArr, 1)
-    
-    If processedCount = 0 Then
-        MsgBox "Нет данных для обработки.", vbInformation, "Выход"
-        Exit Sub
-    End If
-    
-    ' --- 4. Выбор файла-источника ---
-    sourceFilePath = Application.GetOpenFilename( _
-        FileFilter:="Excel Files,*.xls*;*.xlsx;*.xlsm;*.xlsb", _
-        Title:="Выберите инспекции, скачанный из АИС НСК", _
-        MultiSelect:=False)
-    If sourceFilePath = False Then
-        MsgBox "Операция отменена пользователем.", vbInformation, "Отмена"
-        Exit Sub
-    End If
-    
-    ' --- 5. Открытие источника ---
-    wasAlreadyOpen = False
-    On Error Resume Next
-    Set wbSource = Workbooks(Dir(sourceFilePath))
-    If wbSource Is Nothing Then
-        Set wbSource = Workbooks.Open(sourceFilePath, ReadOnly:=True, UpdateLinks:=False)
-        If wbSource Is Nothing Then
-            MsgBox "Не удалось открыть файл-источник: " & sourceFilePath, vbCritical, "Ошибка"
-            Exit Sub
-        End If
-    Else
-        If wbSource.FullName <> sourceFilePath Then
-            Set wbSource = Workbooks.Open(sourceFilePath, ReadOnly:=True, UpdateLinks:=False)
-            If wbSource Is Nothing Then
-                MsgBox "Не удалось открыть файл-источник: " & sourceFilePath, vbCritical, "Ошибка"
-                Exit Sub
-            End If
-        Else
-            wasAlreadyOpen = True
-        End If
-    End If
-    On Error GoTo 0
-    
-    ' --- 6. Проверка листа "Инспекции" ---
-    Set wsSource = Nothing
-    On Error Resume Next
-    Set wsSource = wbSource.Worksheets("Инспекции")
-    On Error GoTo 0
-    If wsSource Is Nothing Then
-        MsgBox "В файле-источнике не найден лист 'Инспекции'.", vbCritical, "Ошибка"
-        If Not wasAlreadyOpen Then wbSource.Close SaveChanges:=False
-        Exit Sub
-    End If
-    
-    ' --- 7. Чтение источника (ИСПРАВЛЕННЫЙ БЛОК) ---
-    lastRowSource = wsSource.Cells(wsSource.Rows.Count, "C").End(xlUp).Row  ' определяем по столбцу C
-    If lastRowSource < 2 Then
-        MsgBox "В листе 'Инспекции' нет данных (строки начинаются с 2).", vbInformation, "Выход"
-        If Not wasAlreadyOpen Then wbSource.Close SaveChanges:=False
-        Exit Sub
-    End If
-    
-    ' Читаем диапазон C2:AH & lastRowSource в массив
-    ' Столбец C = индекс 1, AG = индекс 31, AH = индекс 32
-    srcArr = wsSource.Range("C2:AH" & lastRowSource).Value2
-    
-    ' --- 8. Закрытие источника ---
-    If Not wasAlreadyOpen Then
-        wbSource.Close SaveChanges:=False
-    End If
-    Set wbSource = Nothing
-    Set wsSource = Nothing
-    
-    ' --- 9. Построение словаря ---
-    Set dict = CreateObject("Scripting.Dictionary")
-    dict.CompareMode = vbTextCompare
-    
-    Dim j As Long
-    Dim srcKey As String
-    For j = 1 To UBound(srcArr, 1)
-        srcKey = Trim(srcArr(j, 1) & "")
-        If srcKey <> "" Then
-            dict(srcKey) = Array(srcArr(j, 31), srcArr(j, 32))  ' AG и AH
-        End If
-    Next j
-    
-    Erase srcArr  ' освобождаем память
-    
-    ' --- 10. Подготовка к обновлению ---
-    screenUpdState = Application.ScreenUpdating
-    recalcState = Application.Calculation
-    eventsState = Application.EnableEvents
+    Set wbDest = ActiveWorkbook
     
     Application.ScreenUpdating = False
-    Application.Calculation = xlCalculationManual
     Application.EnableEvents = False
+    Application.Calculation = xlCalculationManual
+    Application.StatusBar = False
     
-    updateCountQ = 0
-    updateCountR = 0
-    statusInterval = 5000
+    On Error GoTo ErrorHandler
     
     Debug.Print String(80, "=")
-    Debug.Print "Запуск обновления (исправленная версия): " & Now
-    Debug.Print "Всего строк в приёмнике: " & processedCount
-    Debug.Print "Размер словаря источника: " & dict.Count
+    Debug.Print "Р—Р°РїСѓСЃРє Update_status_RFI: " & Now
     
-    ' --- 11. Обработка в памяти ---
-    Dim recKey As String
-    Dim srcVals As Variant
-    Dim curQ As Variant, curR As Variant
-    Dim wasUpdatedQ As Boolean, wasUpdatedR As Boolean
+    ' --- 1. РџР РћР’Р•Р РљРђ Р›РРЎРўРђ Р’ РџР РРЃРњРќРРљР• ---
+    phaseNum = 0
+    phaseDesc = "РџСЂРѕРІРµСЂРєР° РїСЂРёС‘РјРЅРёРєР°"
+    UpdateStatusBar phaseNum, phaseDesc, 0, 0, 0, -1
     
-    For i = 1 To processedCount
-        recKey = Trim(recArr(i, 1) & "")
-        If recKey <> "" Then
-            If dict.exists(recKey) Then
-                srcVals = dict(recKey)
+    On Error Resume Next
+    Set wsDest = wbDest.Worksheets(DEST_SHEET_NAME)
+    On Error GoTo ErrorHandler
+    
+    If wsDest Is Nothing Then
+        MsgBox "Р’ Р°РєС‚РёРІРЅРѕР№ РєРЅРёРіРµ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ Р»РёСЃС‚ '" & DEST_SHEET_NAME & "'.", vbCritical, "РћС€РёР±РєР°"
+        GoTo Cleanup
+    End If
+    
+    ' --- 2. РџРћР”Р“РћРўРћР’РљРђ Р”РђРќРќР«РҐ РџР РРЃРњРќРРљРђ ---
+    phaseNum = 1
+    phaseDesc = "Р§С‚РµРЅРёРµ РїСЂРёС‘РјРЅРёРєР°"
+    phaseStart = Timer
+    
+    With wsDest
+        lastRowDest = .Cells(.Rows.Count, "A").End(xlUp).Row
+        If lastRowDest < 3 Then
+            MsgBox "РќР° Р»РёСЃС‚Рµ РїСЂРёС‘РјРЅРёРєР° РЅРµС‚ РґР°РЅРЅС‹С….", vbExclamation, "РќРµС‚ РґР°РЅРЅС‹С…"
+            GoTo Cleanup
+        End If
+        
+        ' РћС‡РёС‰Р°РµРј СЃС‚РѕР»Р±С†С‹ P (16), Q (17), R (18)
+        .Range(.Cells(3, 16), .Cells(lastRowDest, 18)).ClearContents
+        
+        ' Р§РёС‚Р°РµРј РјР°СЃСЃРёРІ СЃС‚СЂРѕРіРѕ РѕС‚ A (1) РґРѕ R (18)
+        arrDest = .Range(.Cells(3, 1), .Cells(lastRowDest, 18)).Value2
+    End With
+    
+    destRows = UBound(arrDest, 1)
+    Debug.Print "РџСЂРёС‘РјРЅРёРє РїСЂРѕС‡РёС‚Р°РЅ. РЎС‚СЂРѕРє: " & destRows & ". Р’СЂРµРјСЏ: " & Format(Timer - phaseStart, "0.00") & " СЃРµРє."
+
+    ' --- 3. РџРћРРЎРљ Р¤РђР™Р›Рђ-РРЎРўРћР§РќРРљРђ РџРћ РњРђРЎРљР• ---
+    phaseDesc = "РџРѕРёСЃРє РёСЃС‚РѕС‡РЅРёРєР°"
+    UpdateStatusBar 0, phaseDesc, 0, 0, 0, -1
+    
+    ' РС‰РµРј СЃР°РјС‹Р№ СЃРІРµР¶РёР№ С„Р°Р№Р» РІ РїР°РїРєРµ
+    fileName = Dir(DEFAULT_SRC_FOLDER & FILE_MASK)
+    newestDate = #1/1/1900#
+    
+    Do While fileName <> ""
+        If FileDateTime(DEFAULT_SRC_FOLDER & fileName) > newestDate Then
+            newestDate = FileDateTime(DEFAULT_SRC_FOLDER & fileName)
+            newestFile = DEFAULT_SRC_FOLDER & fileName
+        End If
+        fileName = Dir
+    Loop
+    
+    If newestFile <> "" Then
+        srcFilePath = newestFile
+    Else
+        ' Fallback: РµСЃР»Рё РІ РїР°РїРєРµ РЅРёС‡РµРіРѕ РЅРµС‚, СЃРїСЂР°С€РёРІР°РµРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+        If MsgBox("Р¤Р°Р№Р»С‹ РїРѕ РјР°СЃРєРµ '" & FILE_MASK & "' РЅРµ РЅР°Р№РґРµРЅС‹ РІ РїР°РїРєРµ:" & vbCrLf & DEFAULT_SRC_FOLDER & vbCrLf & vbCrLf & "Р’С‹Р±СЂР°С‚СЊ С„Р°Р№Р» РІСЂСѓС‡РЅСѓСЋ?", _
+                  vbYesNo + vbExclamation, "Р¤Р°Р№Р» РЅРµ РЅР°Р№РґРµРЅ") = vbYes Then
+            srcFilePath = Application.GetOpenFilename("Excel Files (*.xlsx; *.xlsb; *.xlsm), *.xlsx; *.xlsb; *.xlsm")
+            If VarType(srcFilePath) = vbBoolean Then GoTo Cleanup
+        Else
+            GoTo Cleanup
+        End If
+    End If
+
+    ' --- 4. РћРўРљР Р«РўРР• РРЎРўРћР§РќРРљРђ ---
+    Set wbSrc = Workbooks.Open(fileName:=srcFilePath, UpdateLinks:=False, ReadOnly:=True)
+    On Error Resume Next
+    Set wsSrc = wbSrc.Worksheets(SRC_SHEET_NAME)
+    On Error GoTo ErrorHandler
+    
+    If wsSrc Is Nothing Then
+        MsgBox "Р’ С„Р°Р№Р»Рµ '" & wbSrc.Name & "' РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ Р»РёСЃС‚ '" & SRC_SHEET_NAME & "'.", vbCritical, "Р›РёСЃС‚ РЅРµ РЅР°Р№РґРµРЅ"
+        GoTo Cleanup
+    End If
+
+    ' --- 5. Р§РўР•РќРР• РРЎРўРћР§РќРРљРђ Р РџРћРЎРўР РћР•РќРР• РЎР›РћР’РђР Р•Р™ ---
+    phaseNum = 1
+    phaseDesc = "РџРѕСЃС‚СЂРѕРµРЅРёРµ СЃР»РѕРІР°СЂРµР№"
+    phaseStart = Timer
+    lastPct = 0
+    
+    With wsSrc
+        lastRowSrc = .Cells(.Rows.Count, "A").End(xlUp).Row
+        If lastRowSrc < 2 Then
+            MsgBox "РќР° Р»РёСЃС‚Рµ РёСЃС‚РѕС‡РЅРёРєР° РЅРµС‚ РґР°РЅРЅС‹С….", vbExclamation, "РќРµС‚ РґР°РЅРЅС‹С…"
+            GoTo Cleanup
+        End If
+        ' Р§РёС‚Р°РµРј РѕС‚ A РґРѕ AH (34 СЃС‚РѕР»Р±С†Р°), С‡С‚РѕР±С‹ РёРЅРґРµРєСЃС‹ СЃРѕРІРїР°РґР°Р»Рё СЃ Р±СѓРєРІР°РјРё
+        arrSrc = .Range(.Cells(2, 1), .Cells(lastRowSrc, 34)).Value2
+    End With
+    
+    ' Р—Р°РєСЂС‹РІР°РµРј РёСЃС‚РѕС‡РЅРёРє СЃСЂР°Р·Сѓ РїРѕСЃР»Рµ С‡С‚РµРЅРёСЏ
+    wbSrc.Close SaveChanges:=False
+    Set wbSrc = Nothing: Set wsSrc = Nothing
+    
+    srcRows = UBound(arrSrc, 1)
+    
+    ' РЎРѕР·РґР°РµРј 3 СЃР»РѕРІР°СЂСЏ РґР»СЏ P, Q, R
+    Set dictP = CreateObject("Scripting.Dictionary"): dictP.CompareMode = vbBinaryCompare
+    Set dictQ = CreateObject("Scripting.Dictionary"): dictQ.CompareMode = vbBinaryCompare
+    Set dictR = CreateObject("Scripting.Dictionary"): dictR.CompareMode = vbBinaryCompare
+    
+    For i = 1 To srcRows
+        ' РљР»СЋС‡ РёР· СЃС‚РѕР»Р±С†Р° D (РёРЅРґРµРєСЃ 4)
+        vKey = arrSrc(i, 4): If IsError(vKey) Then vKey = ""
+        
+        ' Р—РЅР°С‡РµРЅРёСЏ: C (3), AG (33), AH (34)
+        vC = arrSrc(i, 3): If IsError(vC) Then vC = ""
+        vAG = arrSrc(i, 33): If IsError(vAG) Then vAG = ""
+        vAH = arrSrc(i, 34): If IsError(vAH) Then vAH = ""
+        
+        ' РЎР±РѕСЂРєР° Рё Р¶РµСЃС‚РєР°СЏ РѕС‡РёСЃС‚РєР° РєР»СЋС‡Р°
+        key = CStr(vKey & "")
+        key = Replace(key, " ", "")
+        key = Replace(key, ChrW(160), "")
+        key = Replace(key, vbCr, "")
+        key = Replace(key, vbLf, "")
+        key = Replace(key, vbTab, "")
+        
+        If Len(key) > 0 Then
+            If Not dictP.Exists(key) Then
+                ' РљР»СЋС‡Р° РЅРµС‚ - РґРѕР±Р°РІР»СЏРµРј РІСЃРµ С‚СЂРё Р·РЅР°С‡РµРЅРёСЏ
+                dictP(key) = vC
+                dictQ(key) = vAG
+                dictR(key) = vAH
+            Else
+                ' === Р’РђР РРђРќРў Р‘: РќРµ РїРµСЂРµР·Р°РїРёСЃС‹РІР°С‚СЊ РЅРµРїСѓСЃС‚РѕРµ Р·РЅР°С‡РµРЅРёРµ ===
+                existingP = CStr(dictP(key) & "")
+                existingQ = CStr(dictQ(key) & "")
+                existingR = CStr(dictR(key) & "")
                 
-                wasUpdatedQ = False
-                wasUpdatedR = False
-                
-                curQ = recArr(i, 2)
-                If IsEmpty(curQ) Or Trim(curQ & "") = "" Then
-                    recArr(i, 2) = srcVals(0)
-                    updateCountQ = updateCountQ + 1
-                    wasUpdatedQ = True
-                End If
-                
-                curR = recArr(i, 3)
-                If IsEmpty(curR) Or Trim(curR & "") = "" Then
-                    recArr(i, 3) = srcVals(1)
-                    updateCountR = updateCountR + 1
-                    wasUpdatedR = True
-                End If
-                
-                If wasUpdatedQ Or wasUpdatedR Then
-                    Debug.Print "Строка " & (i + 2) & " (ключ: " & recKey & "): " & _
-                                IIf(wasUpdatedQ, "Q->" & srcVals(0), "") & _
-                                IIf(wasUpdatedQ And wasUpdatedR, "; ", "") & _
-                                IIf(wasUpdatedR, "R->" & srcVals(1), "")
-                End If
+                If Len(Trim(existingP)) = 0 And Len(Trim(CStr(vC & ""))) > 0 Then dictP(key) = vC
+                If Len(Trim(existingQ)) = 0 And Len(Trim(CStr(vAG & ""))) > 0 Then dictQ(key) = vAG
+                If Len(Trim(existingR)) = 0 And Len(Trim(CStr(vAH & ""))) > 0 Then dictR(key) = vAH
             End If
         End If
         
-        If i Mod statusInterval = 0 Then
-            Application.StatusBar = "Обработка строки " & i & " из " & processedCount & _
-                                    " (обновлено Q: " & updateCountQ & ", R: " & updateCountR & ")"
-            DoEvents
+        ' РћР±РЅРѕРІР»РµРЅРёРµ РїСЂРѕРіСЂРµСЃСЃ-Р±Р°СЂР°
+        currentPct = Int(i / srcRows * 100)
+        If currentPct > lastPct Then
+            lastPct = currentPct
+            elapsed = Timer - phaseStart
+            If currentPct > 0 Then remaining = (elapsed / currentPct) * (100 - currentPct) Else remaining = 0
+            UpdateStatusBar phaseNum, phaseDesc, currentPct, i, srcRows, remaining
         End If
     Next i
     
-    ' --- 12. Запись изменений на лист ---
-    wsReceiver.Range("Q3:Q" & lastRowReceiver).Value2 = Application.Index(recArr, 0, 2)
-    wsReceiver.Range("R3:R" & lastRowReceiver).Value2 = Application.Index(recArr, 0, 3)
+    Debug.Print "РЎР»РѕРІР°СЂРё РїРѕСЃС‚СЂРѕРµРЅС‹. РЈРЅРёРєР°Р»СЊРЅС‹С… РєР»СЋС‡РµР№: " & dictP.Count & ". Р’СЂРµРјСЏ: " & Format(Timer - phaseStart, "0.00") & " СЃРµРє."
+
+    ' --- 6. РћР‘Р РђР‘РћРўРљРђ РњРђРЎРЎРР’Рђ РџР РРЃРњРќРРљРђ ---
+    phaseNum = 2
+    phaseDesc = "Р—Р°РїРѕР»РЅРµРЅРёРµ P, Q, R"
+    phaseStart = Timer
+    lastPct = 0
     
-    ' --- 13. Восстановление настроек ---
-    Application.StatusBar = False
-    Application.ScreenUpdating = screenUpdState
-    Application.Calculation = recalcState
-    Application.EnableEvents = eventsState
+    For i = 1 To destRows
+        ' РљР»СЋС‡ РёР· СЃС‚РѕР»Р±С†Р° O (РёРЅРґРµРєСЃ 15)
+        vKey = arrDest(i, 15): If IsError(vKey) Then vKey = ""
+        
+        key = CStr(vKey & "")
+        key = Replace(key, " ", "")
+        key = Replace(key, ChrW(160), "")
+        key = Replace(key, vbCr, "")
+        key = Replace(key, vbLf, "")
+        key = Replace(key, vbTab, "")
+        
+        ' Р•СЃР»Рё РєР»СЋС‡ РЅР°Р№РґРµРЅ, Р·Р°РїРёСЃС‹РІР°РµРј Р·РЅР°С‡РµРЅРёСЏ РІ P (16), Q (17), R (18)
+        If dictP.Exists(key) Then
+            arrDest(i, 16) = dictP(key)
+            arrDest(i, 17) = dictQ(key)
+            arrDest(i, 18) = dictR(key)
+        End If
+        
+        ' РћР±РЅРѕРІР»РµРЅРёРµ РїСЂРѕРіСЂРµСЃСЃ-Р±Р°СЂР°
+        currentPct = Int(i / destRows * 100)
+        If currentPct > lastPct Then
+            lastPct = currentPct
+            elapsed = Timer - phaseStart
+            If currentPct > 0 Then remaining = (elapsed / currentPct) * (100 - currentPct) Else remaining = 0
+            UpdateStatusBar phaseNum, phaseDesc, currentPct, i, destRows, remaining
+        End If
+    Next i
     
-    elapsed = Timer - startTime
+    Debug.Print "РџСЂРёС‘РјРЅРёРє РѕР±СЂР°Р±РѕС‚Р°РЅ. Р’СЂРµРјСЏ: " & Format(Timer - phaseStart, "0.00") & " СЃРµРє."
+
+    ' --- 7. Р’Р«Р“Р РЈР—РљРђ Р”РђРќРќР«РҐ Р Р—РђР’Р•Р РЁР•РќРР• ---
+    phaseDesc = "Р—Р°РїРёСЃСЊ РЅР° Р»РёСЃС‚"
+    UpdateStatusBar 2, phaseDesc, 100, destRows, destRows, 0
     
-    Debug.Print "Обработка завершена за " & Format(elapsed, "0.0") & " сек."
-    Debug.Print "Обновлено ячеек Q: " & updateCountQ
-    Debug.Print "Обновлено ячеек R: " & updateCountR
+    wsDest.Range("A3").Resize(destRows, 18).Value2 = arrDest
+    
+    Dim totalTime As Double
+    totalTime = Round(Timer - startTime, 2)
+    
+    Debug.Print "РћР±СЂР°Р±РѕС‚РєР° Р·Р°РІРµСЂС€РµРЅР°. РћР±С‰РµРµ РІСЂРµРјСЏ: " & totalTime & " СЃРµРє."
     Debug.Print String(80, "=")
     
-    MsgBox "Обновление завершено." & vbCrLf & _
-           "Обработано строк: " & processedCount & vbCrLf & _
-           "Обновлено ячеек Q: " & updateCountQ & vbCrLf & _
-           "Обновлено ячеек R: " & updateCountR & vbCrLf & _
-           "Время выполнения: " & Format(elapsed, "0.0") & " сек.", _
-           vbInformation, "Результат"
-    
-    Set dict = Nothing
-    Erase recArr
+    MsgBox "РћР±СЂР°Р±РѕС‚РєР° Р·Р°РІРµСЂС€РµРЅР°!" & vbCrLf & _
+           "РЈРЅРёРєР°Р»СЊРЅС‹С… РєР»СЋС‡РµР№ РІ РёСЃС‚РѕС‡РЅРёРєРµ: " & dictP.Count & vbCrLf & _
+           "РћР±С‰РµРµ РІСЂРµРјСЏ РІС‹РїРѕР»РЅРµРЅРёСЏ: " & totalTime & " СЃРµРє.", vbInformation, "Р“РѕС‚РѕРІРѕ"
+
+Cleanup:
+    On Error Resume Next
+    If Not wbSrc Is Nothing Then wbSrc.Close SaveChanges:=False
+    Application.StatusBar = False
+    Application.ScreenUpdating = True
+    Application.EnableEvents = True
+    Application.Calculation = xlCalculationAutomatic
+    Set dictP = Nothing: Set dictQ = Nothing: Set dictR = Nothing
+    Set wsDest = Nothing: Set wsSrc = Nothing
+    Set wbDest = Nothing: Set wbSrc = Nothing
+    Exit Sub
+
+ErrorHandler:
+    MsgBox "РџСЂРѕРёР·РѕС€Р»Р° РєСЂРёС‚РёС‡РµСЃРєР°СЏ РѕС€РёР±РєР°:" & vbCrLf & Err.Description & vbCrLf & _
+           "РљРѕРґ РѕС€РёР±РєРё: " & Err.Number, vbCritical, "РћС€РёР±РєР° РІС‹РїРѕР»РЅРµРЅРёСЏ"
+    Resume Cleanup
 End Sub
+
+' =====================================================================
+' Р’РЎРџРћРњРћР“РђРўР•Р›Р¬РќР«Р• Р¤РЈРќРљР¦РР Р”Р›РЇ UI (РРґРµРЅС‚РёС‡РЅС‹ РїРµСЂРІРѕРјСѓ РјР°РєСЂРѕСЃСѓ)
+' =====================================================================
+
+Private Function FormatBar(ByVal pct As Long) As String
+    Const W As Long = 20
+    Dim filled As Long
+    filled = Int(pct * W / 100)
+    If filled > W Then filled = W
+    FormatBar = "[" & String(filled, ChrW(&H2588)) & _
+                String(W - filled, ChrW(&H2591)) & "]"
+End Function
+
+Private Function FormatTime(ByVal secs As Double) As String
+    Dim m As Long, s As Long
+    m = Int(secs / 60)
+    s = Int(secs Mod 60)
+    FormatTime = m & "Рј " & s & "СЃ"
+End Function
+
+Private Sub UpdateStatusBar(ByVal phase As Long, ByVal desc As String, ByVal pct As Long, _
+                            ByVal current As Long, ByVal total As Long, Optional ByVal remTime As Double = -1)
+    Dim timeStr As String
+    If remTime >= 0 Then
+        timeStr = " | ~" & FormatTime(remTime)
+    Else
+        timeStr = ""
+    End If
+    
+    Application.StatusBar = "Р¤Р°Р·Р° " & phase & "/2 " & FormatBar(pct) & " " & pct & "% вЂ” " & desc & " | " & current & " РёР· " & total & timeStr
+    DoEvents
+End Sub
+
+
+
