@@ -21,13 +21,13 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-'константы для функций API
-Private Const GWL_STYLE As Long = -16& 'для установки нового вида окна
-Private Const GWL_EXSTYLE = -20& 'для расширенного стиля окна
-Private Const WS_CAPTION As Long = &HC00000 'определяет заголовок
-Private Const WS_BORDER As Long = &H800000 'определяет рамку формы
+'РєРѕРЅСЃС‚Р°РЅС‚С‹ РґР»СЏ С„СѓРЅРєС†РёР№ API
+Private Const GWL_STYLE As Long = -16& 'РґР»СЏ СѓСЃС‚Р°РЅРѕРІРєРё РЅРѕРІРѕРіРѕ РІРёРґР° РѕРєРЅР°
+Private Const GWL_EXSTYLE = -20& 'РґР»СЏ СЂР°СЃС€РёСЂРµРЅРЅРѕРіРѕ СЃС‚РёР»СЏ РѕРєРЅР°
+Private Const WS_CAPTION As Long = &HC00000 'РѕРїСЂРµРґРµР»СЏРµС‚ Р·Р°РіРѕР»РѕРІРѕРє
+Private Const WS_BORDER As Long = &H800000 'РѕРїСЂРµРґРµР»СЏРµС‚ СЂР°РјРєСѓ С„РѕСЂРјС‹
 
-'Функции API, применяемые для поиска окна и изменения его стиля
+'Р¤СѓРЅРєС†РёРё API, РїСЂРёРјРµРЅСЏРµРјС‹Рµ РґР»СЏ РїРѕРёСЃРєР° РѕРєРЅР° Рё РёР·РјРµРЅРµРЅРёСЏ РµРіРѕ СЃС‚РёР»СЏ
 #If VBA7 Then
     Private Declare PtrSafe Function SetWindowLong Lib "User32" Alias "SetWindowLongA" (ByVal hwnd As LongPtr, ByVal nIndex As Long, ByVal dwNewLong As LongPtr) As LongPtr
     Private Declare PtrSafe Function GetWindowLong Lib "User32" Alias "GetWindowLongA" (ByVal hwnd As LongPtr, ByVal nIndex As Long) As LongPtr
@@ -43,34 +43,34 @@ Private Const WS_BORDER As Long = &H800000 'определяет рамку формы
 Private Sub Image1_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     Dim Source$
     Source = "https://www.tinkoff.ru/cf/7xgUs1rFSvi"
-    MsgBox Source, vbInformation, "Сбор на отдых"
+    MsgBox Source, vbInformation, "РЎР±РѕСЂ РЅР° РѕС‚РґС‹С…"
 End Sub
 
 Private Sub UserForm_Initialize()
     Dim ihWnd As LongPtr, hStyle As LongPtr
     
-    Width = 174     'Размер окна ширина
-    Height = 212    'Размер окна высота
+    Width = 174     'Р Р°Р·РјРµСЂ РѕРєРЅР° С€РёСЂРёРЅР°
+    Height = 212    'Р Р°Р·РјРµСЂ РѕРєРЅР° РІС‹СЃРѕС‚Р°
     
-    'ищем окно формы среди всех открытых окон
+    'РёС‰РµРј РѕРєРЅРѕ С„РѕСЂРјС‹ СЃСЂРµРґРё РІСЃРµС… РѕС‚РєСЂС‹С‚С‹С… РѕРєРѕРЅ
     If val(Application.Version) < 9 Then
-        ihWnd = FindWindow("ThunderXFrame", Me.Caption) 'для Excel 97
+        ihWnd = FindWindow("ThunderXFrame", Me.Caption) 'РґР»СЏ Excel 97
     Else
-        ihWnd = FindWindow("ThunderDFrame", Me.Caption) 'для Excel 2000 и выше
+        ihWnd = FindWindow("ThunderDFrame", Me.Caption) 'РґР»СЏ Excel 2000 Рё РІС‹С€Рµ
     End If
-    'получаем информацию о найденном окне(стили и т.д.)
+    'РїРѕР»СѓС‡Р°РµРј РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ РЅР°Р№РґРµРЅРЅРѕРј РѕРєРЅРµ(СЃС‚РёР»Рё Рё С‚.Рґ.)
     hStyle = GetWindowLong(ihWnd, GWL_STYLE)
-    'назначаем переменной новый стиль для окна формы
+    'РЅР°Р·РЅР°С‡Р°РµРј РїРµСЂРµРјРµРЅРЅРѕР№ РЅРѕРІС‹Р№ СЃС‚РёР»СЊ РґР»СЏ РѕРєРЅР° С„РѕСЂРјС‹
     hStyle = hStyle And Not WS_CAPTION And Not WS_BORDER
-    'изменяем вид окна: убираем меню(заголовок) и рамку
+    'РёР·РјРµРЅСЏРµРј РІРёРґ РѕРєРЅР°: СѓР±РёСЂР°РµРј РјРµРЅСЋ(Р·Р°РіРѕР»РѕРІРѕРє) Рё СЂР°РјРєСѓ
     SetWindowLong ihWnd, GWL_STYLE, hStyle
     SetWindowLong ihWnd, GWL_EXSTYLE, 0
-    'перерисовываем форму, точнее строку меню(заголовка)
+    'РїРµСЂРµСЂРёСЃРѕРІС‹РІР°РµРј С„РѕСЂРјСѓ, С‚РѕС‡РЅРµРµ СЃС‚СЂРѕРєСѓ РјРµРЅСЋ(Р·Р°РіРѕР»РѕРІРєР°)
     DrawMenuBar ihWnd
-    'меняем размер формы, т.к. сделали смещение элементов формы вверх на высоту заголовка
+    'РјРµРЅСЏРµРј СЂР°Р·РјРµСЂ С„РѕСЂРјС‹, С‚.Рє. СЃРґРµР»Р°Р»Рё СЃРјРµС‰РµРЅРёРµ СЌР»РµРјРµРЅС‚РѕРІ С„РѕСЂРјС‹ РІРІРµСЂС… РЅР° РІС‹СЃРѕС‚Сѓ Р·Р°РіРѕР»РѕРІРєР°
     Me.Height = Me.Height + (GWL_EXSTYLE - 9)
     
-    'Настройка формы при запуске
+    'РќР°СЃС‚СЂРѕР№РєР° С„РѕСЂРјС‹ РїСЂРё Р·Р°РїСѓСЃРєРµ
     StartUpPosition = 0
     Top = Application.Top + (Application.Height / 2) - (Height / 2) + 10
     Left = Application.Left + (Application.Width / 2) - Height

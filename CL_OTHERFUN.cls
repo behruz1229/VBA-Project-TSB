@@ -9,14 +9,14 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-'Установка ширины столбцов
+'РЈСЃС‚Р°РЅРѕРІРєР° С€РёСЂРёРЅС‹ СЃС‚РѕР»Р±С†РѕРІ
 Public Sub ColumnsWidth(ByRef SH As Excel.Worksheet, ByRef start_col%, ParamArray arr())
     Dim q&, w&: For q = start_col To start_col + UBound(arr)
         SH.Columns(q).ColumnWidth = arr(w): w = w + 1
     Next
 End Sub
 
-'Функция форматирования ячеек
+'Р¤СѓРЅРєС†РёСЏ С„РѕСЂРјР°С‚РёСЂРѕРІР°РЅРёСЏ СЏС‡РµРµРє
 Public Sub FormatCells(ByRef RG As Range, _
     Optional ByRef HA As XlHAlign = xlCenter, _
     Optional ByRef VA As XlVAlign = xlCenter, _
@@ -38,7 +38,7 @@ Public Sub FormatCells(ByRef RG As Range, _
     
 End Sub
 
-'Разлиновка таблицы (Создание границ ячеек)
+'Р Р°Р·Р»РёРЅРѕРІРєР° С‚Р°Р±Р»РёС†С‹ (РЎРѕР·РґР°РЅРёРµ РіСЂР°РЅРёС† СЏС‡РµРµРє)
 Public Sub BoldersCells(ByRef RG As Range, Optional ByRef xLine As XlBorderWeight = xlThin)
     RG.Borders(xlEdgeTop).Weight = xLine
     RG.Borders(xlEdgeBottom).Weight = xLine
@@ -48,18 +48,18 @@ Public Sub BoldersCells(ByRef RG As Range, Optional ByRef xLine As XlBorderWeigh
     RG.Borders(xlInsideHorizontal).Weight = xLine
 End Sub
 
-'Проверка наличия листа в книге
+'РџСЂРѕРІРµСЂРєР° РЅР°Р»РёС‡РёСЏ Р»РёСЃС‚Р° РІ РєРЅРёРіРµ
 Public Function shExists(ByRef WB As Excel.Workbook, ByRef shName$) As Boolean
     On Error Resume Next
     shExists = (WB.Worksheets(shName).Name = shName)
 End Function
 
-'Функция добавления листа с именем sTXT
+'Р¤СѓРЅРєС†РёСЏ РґРѕР±Р°РІР»РµРЅРёСЏ Р»РёСЃС‚Р° СЃ РёРјРµРЅРµРј sTXT
 Public Function CreateSheet(ByVal shName$) As Excel.Worksheet
     
     shName = IIf(Len(shName) > 29, ".." & Right(shName, 29), shName)
     
-    'Добавление нового листа в книгу если его нет
+    'Р”РѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕРіРѕ Р»РёСЃС‚Р° РІ РєРЅРёРіСѓ РµСЃР»Рё РµРіРѕ РЅРµС‚
     With ThisWorkbook.Worksheets
         If Not shExists(ThisWorkbook, shName) Then .Add(after:=.Item(.Count)).Name = shName
         Set CreateSheet = .Item(shName)

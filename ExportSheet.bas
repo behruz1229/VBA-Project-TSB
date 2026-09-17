@@ -2,7 +2,7 @@ Attribute VB_Name = "ExportSheet"
 Option Explicit
 
 '======================================================
-'Экспорт прочих листов в .pdf или .xlsx
+'Р­РєСЃРїРѕСЂС‚ РїСЂРѕС‡РёС… Р»РёСЃС‚РѕРІ РІ .pdf РёР»Рё .xlsx
 '======================================================
 
 Private Const xlFiles = "Excel Files (*.xlsx), *.xlsx"
@@ -10,7 +10,7 @@ Private Const pdFiles = "PDF Files (*.pdf), *.pdf"
 
 Private SH As Worksheet
 
-'Функция экспорта листов из книги
+'Р¤СѓРЅРєС†РёСЏ СЌРєСЃРїРѕСЂС‚Р° Р»РёСЃС‚РѕРІ РёР· РєРЅРёРіРё
 Public Sub ExportActiveSheet(ByRef bFormat As Boolean, Optional ByRef sFileName$)
     Dim sFile$, sName$
     
@@ -30,16 +30,16 @@ Public Sub ExportActiveSheet(ByRef bFormat As Boolean, Optional ByRef sFileName$
 en:
 End Sub
 
-'Функция выбора каталога и файла сохранения
+'Р¤СѓРЅРєС†РёСЏ РІС‹Р±РѕСЂР° РєР°С‚Р°Р»РѕРіР° Рё С„Р°Р№Р»Р° СЃРѕС…СЂР°РЅРµРЅРёСЏ
 Private Function ShowFileDialog$(ByRef sNameFiles$, ByRef TypeFile$)
-    Const sTitle$ = "Сохранения файла"
+    Const sTitle$ = "РЎРѕС…СЂР°РЅРµРЅРёСЏ С„Р°Р№Р»Р°"
     Dim tmp
-    tmp = Application.GetSaveAsFilename(sNameFiles, FileFilter:=TypeFile, Title:=sTitle, ButtonText:="Экспорт")
+    tmp = Application.GetSaveAsFilename(sNameFiles, FileFilter:=TypeFile, Title:=sTitle, ButtonText:="Р­РєСЃРїРѕСЂС‚")
     If tmp = False Then Exit Function
     ShowFileDialog = tmp
 End Function
 
-'Экспорт в pdf
+'Р­РєСЃРїРѕСЂС‚ РІ pdf
 Private Sub to_pdf(ByRef SH As Worksheet, ByRef sFile$)
     SH.ExportAsFixedFormat _
     Type:=xlTypePDF, _
@@ -50,7 +50,7 @@ Private Sub to_pdf(ByRef SH As Worksheet, ByRef sFile$)
     OpenAfterPublish:=True
 End Sub
 
-'Экспорт в xlsx
+'Р­РєСЃРїРѕСЂС‚ РІ xlsx
 Private Sub to_excel(ByRef SH As Worksheet, ByRef sFile$)
     Application.ScreenUpdating = False
     Application.DisplayAlerts = False

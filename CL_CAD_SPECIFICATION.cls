@@ -10,22 +10,22 @@ Attribute VB_Exposed = False
 Option Explicit
 
 '=============================================================
-'    Класс для создание таблицы со спецификацией для систем
-'      автоматизированного проэктирования работ программ
+'    РљР»Р°СЃСЃ РґР»СЏ СЃРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ СЃРѕ СЃРїРµС†РёС„РёРєР°С†РёРµР№ РґР»СЏ СЃРёСЃС‚РµРј
+'      Р°РІС‚РѕРјР°С‚РёР·РёСЂРѕРІР°РЅРЅРѕРіРѕ РїСЂРѕСЌРєС‚РёСЂРѕРІР°РЅРёСЏ СЂР°Р±РѕС‚ РїСЂРѕРіСЂР°РјРј
 '=============================================================
 
 
-'Столбцы
+'РЎС‚РѕР»Р±С†С‹
 Private Const L_PP$ = "A"
 Private Const L_Mat$ = "B"
 Private Const L_Cnt$ = "C"
 Private Const L_Wght_eq$ = "D"
 Private Const L_Wght_sum$ = "E"
 
-'Настройка таблицы
+'РќР°СЃС‚СЂРѕР№РєР° С‚Р°Р±Р»РёС†С‹
 Private Const start_row As Byte = 3
 
-'Переменные класса
+'РџРµСЂРµРјРµРЅРЅС‹Рµ РєР»Р°СЃСЃР°
 Private sum_wght#
 Private mass_data()
 Private dict_data As Object
@@ -34,7 +34,7 @@ Private OtherFunction As New CL_OTHERFUN
 Private THWB As New CL_THISWORKBOOK
 
 
-'Конструктор и деструктор класса
+'РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Рё РґРµСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР°
 Private Sub Class_Initialize()
     Set dict_data = CreateObject("Scripting.Dictionary")
     mass_data = THWB.MassData
@@ -46,30 +46,30 @@ Private Sub Class_Terminate()
     Set SH = Nothing
 End Sub
 
-'Номера столбцов
+'РќРѕРјРµСЂР° СЃС‚РѕР»Р±С†РѕРІ
 Private Property Get cNumPP%()
     cNumPP = Columns(L_PP).Column
 End Property
 
-'Последняя строка данных в таблице
+'РџРѕСЃР»РµРґРЅСЏСЏ СЃС‚СЂРѕРєР° РґР°РЅРЅС‹С… РІ С‚Р°Р±Р»РёС†Рµ
 Private Property Get cnt_row&()
     cnt_row = SH.Cells(Rows.Count, cNumPP).End(xlUp).Row
 End Property
 
 
-'Создание документа
+'РЎРѕР·РґР°РЅРёРµ РґРѕРєСѓРјРµРЅС‚Р°
 Public Sub CreateDocument(ByRef sFilter$, ByRef mass())
     
-    'Создание листа если его нет
+    'РЎРѕР·РґР°РЅРёРµ Р»РёСЃС‚Р° РµСЃР»Рё РµРіРѕ РЅРµС‚
     Set SH = OtherFunction.CreateSheet(sFilter)
-    CreateHeader sFilter    'Создание шапки таблицы
+    CreateHeader sFilter    'РЎРѕР·РґР°РЅРёРµ С€Р°РїРєРё С‚Р°Р±Р»РёС†С‹
     
     With SH.Range(L_PP & start_row).Resize(UBound(mass), UBound(mass, 2))
         OtherFunction.FormatCells .Offset, xlHAlignCenter, xlVAlignCenter, "Times New Roman", 11, Wrap:=True
         .Value = mass
     End With
     
-    CreateFooter    'Создание подвала итого
+    CreateFooter    'РЎРѕР·РґР°РЅРёРµ РїРѕРґРІР°Р»Р° РёС‚РѕРіРѕ
     
     OtherFunction.BoldersCells SH.Range(L_PP & start_row).CurrentRegion, xlThin
     PrinterConfiguration
@@ -77,7 +77,7 @@ Public Sub CreateDocument(ByRef sFilter$, ByRef mass())
     
 End Sub
 
-'Вывод данных в массив для вставки
+'Р’С‹РІРѕРґ РґР°РЅРЅС‹С… РІ РјР°СЃСЃРёРІ РґР»СЏ РІСЃС‚Р°РІРєРё
 Private Function GetMassData()
     Dim q&, w&, i, mass()
     ReDim mass(1 To dict_data.Count, 1 To 5)
@@ -93,13 +93,13 @@ Private Function GetMassData()
     GetMassData = mass
 End Function
 
-'Массив вставляемой таблицы
+'РњР°СЃСЃРёРІ РІСЃС‚Р°РІР»СЏРµРјРѕР№ С‚Р°Р±Р»РёС†С‹
 Public Function GetMassDiagramm(ByRef sFilter$)
     LoadDataInDict sFilter
     GetMassDiagramm = GetMassData
 End Function
 
-'Формирование массива данных для вставки таблицы Реестр к п.3
+'Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ РјР°СЃСЃРёРІР° РґР°РЅРЅС‹С… РґР»СЏ РІСЃС‚Р°РІРєРё С‚Р°Р±Р»РёС†С‹ Р РµРµСЃС‚СЂ Рє Рї.3
 Private Sub LoadDataInDict(ByRef sFilter$)
     Dim q&, sKey$
     
@@ -121,13 +121,13 @@ End Sub
 Private Function tmpdict(q) As Object
     Set tmpdict = CreateObject("Scripting.Dictionary")
     With tmpdict
-        .Add key:=.Count, Item:=mass_data(q, idx_name)    'Наименование элемента
-        .Add key:=.Count, Item:=mass_data(q, idx_mark)    'Марка элемента
-        .Add key:=.Count, Item:=mass_data(q, idx_wght)    'Вес элемента
+        .Add key:=.Count, Item:=mass_data(q, idx_name)    'РќР°РёРјРµРЅРѕРІР°РЅРёРµ СЌР»РµРјРµРЅС‚Р°
+        .Add key:=.Count, Item:=mass_data(q, idx_mark)    'РњР°СЂРєР° СЌР»РµРјРµРЅС‚Р°
+        .Add key:=.Count, Item:=mass_data(q, idx_wght)    'Р’РµСЃ СЌР»РµРјРµРЅС‚Р°
     End With
 End Function
 
-'Ключ для словаря с элементами титул, dp, марка, наименование, позиция, вес
+'РљР»СЋС‡ РґР»СЏ СЃР»РѕРІР°СЂСЏ СЃ СЌР»РµРјРµРЅС‚Р°РјРё С‚РёС‚СѓР», dp, РјР°СЂРєР°, РЅР°РёРјРµРЅРѕРІР°РЅРёРµ, РїРѕР·РёС†РёСЏ, РІРµСЃ
 Private Property Get GetKeyElement$(ByRef q&)
     Dim sKey$
     sKey = mass_data(q, idx_title) & vbTab
@@ -138,29 +138,29 @@ Private Property Get GetKeyElement$(ByRef q&)
     GetKeyElement = sKey
 End Property
 
-'Формирование названий столбцов
+'Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ РЅР°Р·РІР°РЅРёР№ СЃС‚РѕР»Р±С†РѕРІ
 Private Function dict_header() As Object
     Set dict_header = CreateObject("Scripting.Dictionary")
     With dict_header
-        .Add key:=.Count + 1, Item:="Поз."
-        .Add key:=.Count + 1, Item:="Наименование"
-        .Add key:=.Count + 1, Item:="Кол-во"
-        .Add key:=.Count + 1, Item:="Масса ед., кг"
-        .Add key:=.Count + 1, Item:="Масса общая, кг"
+        .Add key:=.Count + 1, Item:="РџРѕР·."
+        .Add key:=.Count + 1, Item:="РќР°РёРјРµРЅРѕРІР°РЅРёРµ"
+        .Add key:=.Count + 1, Item:="РљРѕР»-РІРѕ"
+        .Add key:=.Count + 1, Item:="РњР°СЃСЃР° РµРґ., РєРі"
+        .Add key:=.Count + 1, Item:="РњР°СЃСЃР° РѕР±С‰Р°СЏ, РєРі"
     End With
 End Function
 
-'Шапка таблицы Приложение к акту освидетельствования скрытых работ
+'РЁР°РїРєР° С‚Р°Р±Р»РёС†С‹ РџСЂРёР»РѕР¶РµРЅРёРµ Рє Р°РєС‚Сѓ РѕСЃРІРёРґРµС‚РµР»СЊСЃС‚РІРѕРІР°РЅРёСЏ СЃРєСЂС‹С‚С‹С… СЂР°Р±РѕС‚
 Private Sub CreateHeader(ByRef sFilter$)
     Dim addr$, tmpstr$
     
-    OtherFunction.ColumnsWidth SH, 1, 9, 40, 12, 12, 15 'Ширина столбцов
+    OtherFunction.ColumnsWidth SH, 1, 9, 40, 12, 12, 15 'РЁРёСЂРёРЅР° СЃС‚РѕР»Р±С†РѕРІ
     
     With SH
-        .Rows("1:1").RowHeight = 20 'Высоты строк
-        With .Range("A1:E1")    'Заголовоки документа
+        .Rows("1:1").RowHeight = 20 'Р’С‹СЃРѕС‚С‹ СЃС‚СЂРѕРє
+        With .Range("A1:E1")    'Р—Р°РіРѕР»РѕРІРѕРєРё РґРѕРєСѓРјРµРЅС‚Р°
             OtherFunction.FormatCells .Offset, xlHAlignCenter, xlVAlignBottom, "Calibri", 14, Merge:=True, Bold:=True
-            .Value = "Спецификация"
+            .Value = "РЎРїРµС†РёС„РёРєР°С†РёСЏ"
         End With
         With .Range("A2:E2")
             OtherFunction.FormatCells .Offset, xlHAlignCenter, xlVAlignBottom, "Times New Roman", 11
@@ -171,7 +171,7 @@ Private Sub CreateHeader(ByRef sFilter$)
     
 End Sub
 
-'Подвал ИТОГО
+'РџРѕРґРІР°Р» РРўРћР“Рћ
 Private Sub CreateFooter()
     Dim iRow&
     
@@ -184,13 +184,13 @@ Private Sub CreateFooter()
     
     With SH.Range(L_PP & iRow & ":" & L_Wght_eq & iRow)
         OtherFunction.FormatCells .Offset, xlHAlignRight, xlVAlignCenter, "Times New Roman", 11, Bold:=True, Merge:=True
-        .Value = "Масса общая:"
+        .Value = "РњР°СЃСЃР° РѕР±С‰Р°СЏ:"
     End With
     
 End Sub
     
 
-'настройки принтинга листа
+'РЅР°СЃС‚СЂРѕР№РєРё РїСЂРёРЅС‚РёРЅРіР° Р»РёСЃС‚Р°
 Private Sub PrinterConfiguration()
 
     Application.PrintCommunication = False
@@ -203,7 +203,7 @@ Private Sub PrinterConfiguration()
         .RightHeader = ""
         .LeftFooter = ""
         .CenterFooter = ""
-        .RightFooter = "Страница &P из &N"
+        .RightFooter = "РЎС‚СЂР°РЅРёС†Р° &P РёР· &N"
         .LeftMargin = Application.InchesToPoints(1)
         .RightMargin = Application.InchesToPoints(0.3)
         .TopMargin = Application.InchesToPoints(0.3)

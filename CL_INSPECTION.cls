@@ -10,39 +10,39 @@ Attribute VB_Exposed = False
 Option Explicit
 
 
-'Настройки файла:
-Private Const mask_file$ = "инспекции"
-Private Const sFolder$ = "\\vls.lan\ULVZG-DFS\ПТС\1.14. ТСБ и МОТ_Исполнительная документация КМ\!Ведомость элементов"
+'РќР°СЃС‚СЂРѕР№РєРё С„Р°Р№Р»Р°:
+Private Const mask_file$ = "РёРЅСЃРїРµРєС†РёРё"
+Private Const sFolder$ = "\\vls.lan\ULVZG-DFS\РџРўРЎ\1.14. РўРЎР‘ Рё РњРћРў_РСЃРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ РґРѕРєСѓРјРµРЅС‚Р°С†РёСЏ РљРњ\!Р’РµРґРѕРјРѕСЃС‚СЊ СЌР»РµРјРµРЅС‚РѕРІ"
 
-'Настройки таблицы:
-Private Const sheet_name$ = "Инспекции"
+'РќР°СЃС‚СЂРѕР№РєРё С‚Р°Р±Р»РёС†С‹:
+Private Const sheet_name$ = "РРЅСЃРїРµРєС†РёРё"
 Private Const start_row As Byte = 2
 
-'Столбцы с данными
-Private Const L_ID$ = "A" 'Служебный столбец для счета последней строки таблицы
-Private Const L_Insp_NumAis$ = "C"    'Номера инспекций
-Private Const L_Insp_NumSmu$ = "D"    'Исходящий номер инспекий сму
+'РЎС‚РѕР»Р±С†С‹ СЃ РґР°РЅРЅС‹РјРё
+Private Const L_ID$ = "A" 'РЎР»СѓР¶РµР±РЅС‹Р№ СЃС‚РѕР»Р±РµС† РґР»СЏ СЃС‡РµС‚Р° РїРѕСЃР»РµРґРЅРµР№ СЃС‚СЂРѕРєРё С‚Р°Р±Р»РёС†С‹
+Private Const L_Insp_NumAis$ = "C"    'РќРѕРјРµСЂР° РёРЅСЃРїРµРєС†РёР№
+Private Const L_Insp_NumSmu$ = "D"    'РСЃС…РѕРґСЏС‰РёР№ РЅРѕРјРµСЂ РёРЅСЃРїРµРєРёР№ СЃРјСѓ
 
-Private Const L_Insp_StatGSP$ = "AG"  'Статус RFI ГСП
-Private Const L_Insp_StatSK$ = "AH"   'Статус RFI СК
-Private Const L_Insp_ResltGSP$ = "AS" 'Заключение RFI ГСП
-Private Const L_Insp_ResltSK$ = "AT"  'Заключение RFI СК
+Private Const L_Insp_StatGSP$ = "AG"  'РЎС‚Р°С‚СѓСЃ RFI Р“РЎРџ
+Private Const L_Insp_StatSK$ = "AH"   'РЎС‚Р°С‚СѓСЃ RFI РЎРљ
+Private Const L_Insp_ResltGSP$ = "AS" 'Р—Р°РєР»СЋС‡РµРЅРёРµ RFI Р“РЎРџ
+Private Const L_Insp_ResltSK$ = "AT"  'Р—Р°РєР»СЋС‡РµРЅРёРµ RFI РЎРљ
 
-Private Const L_Insp_Date$ = "L"      'Столбец дата подачи
+Private Const L_Insp_Date$ = "L"      'РЎС‚РѕР»Р±РµС† РґР°С‚Р° РїРѕРґР°С‡Рё
 
-'Переменные класса
+'РџРµСЂРµРјРµРЅРЅС‹Рµ РєР»Р°СЃСЃР°
 Private sFileName$
 Private mass_data()
 Private dict_data As Object
 Private WB As Excel.Workbook
 
-'Настройки словаря
+'РќР°СЃС‚СЂРѕР№РєРё СЃР»РѕРІР°СЂСЏ
 Private Enum CompareMode
     BinaryCompare
     TextCompare
 End Enum
 
-'Конструктор и деструктор класса:
+'РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Рё РґРµСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР°:
 Private Sub Class_Initialize()
     Set dict_data = CreateObject("Scripting.Dictionary")
     dict_data.CompareMode = TextCompare
@@ -52,7 +52,7 @@ Private Sub Class_Terminate()
 End Sub
 
 
-'Номера столбцов таблицы
+'РќРѕРјРµСЂР° СЃС‚РѕР»Р±С†РѕРІ С‚Р°Р±Р»РёС†С‹
 Private Property Get cNumID%()
     cNumID = Columns(L_ID).Column
 End Property
@@ -80,28 +80,28 @@ Private Property Get cNumDateSubmiss%()
 End Property
 
 
-'Область табличных данных
+'РћР±Р»Р°СЃС‚СЊ С‚Р°Р±Р»РёС‡РЅС‹С… РґР°РЅРЅС‹С…
 Private Property Get GetRangeTable(ByRef L_Column$) As Range
     Set GetRangeTable = WB.Worksheets(sheet_name).Range(L_ID & start_row).CurrentRegion. _
         Offset(start_row - 1).Resize(cnt_row - start_row + 1)
 End Property
 
-'Загрузка табличных данных в массив
+'Р—Р°РіСЂСѓР·РєР° С‚Р°Р±Р»РёС‡РЅС‹С… РґР°РЅРЅС‹С… РІ РјР°СЃСЃРёРІ
 Private Function GetMassInTable()
     GetMassInTable = GetRangeTable(L_ID).Value
 End Function
 
-'Последняя строка данных в таблице
+'РџРѕСЃР»РµРґРЅСЏСЏ СЃС‚СЂРѕРєР° РґР°РЅРЅС‹С… РІ С‚Р°Р±Р»РёС†Рµ
 Private Property Get cnt_row&()
     cnt_row = WB.Worksheets(sheet_name).Cells(Rows.Count, cNumID).End(xlUp).Row
 End Property
 
-'Словарь с данными инспекций
+'РЎР»РѕРІР°СЂСЊ СЃ РґР°РЅРЅС‹РјРё РёРЅСЃРїРµРєС†РёР№
 Public Property Get DictData() As Object
     Set DictData = dict_data
 End Property
 
-'Загрузка данных в словарь из таблицы
+'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РІ СЃР»РѕРІР°СЂСЊ РёР· С‚Р°Р±Р»РёС†С‹
 Public Sub LoadData()
 
     Dim q As Byte, sStatusBar$, tmpstr$, OPWB As New CL_OPENFILE
@@ -109,8 +109,8 @@ Public Sub LoadData()
     
     For q = 0 To 29
                 
-        'Информация о поиске файла
-        sStatusBar = "Поиск файла: " & mask_file & " на " & GetLastDate(q) & " число..."
+        'РРЅС„РѕСЂРјР°С†РёСЏ Рѕ РїРѕРёСЃРєРµ С„Р°Р№Р»Р°
+        sStatusBar = "РџРѕРёСЃРє С„Р°Р№Р»Р°: " & mask_file & " РЅР° " & GetLastDate(q) & " С‡РёСЃР»Рѕ..."
         If InStr(1, tmpstr, sStatusBar & vbTab, vbTextCompare) = 0 Then
             tmpstr = tmpstr & sStatusBar & vbTab
             Application.StatusBar = sStatusBar
@@ -130,19 +130,19 @@ Public Sub LoadData()
     End If
     
     If sFileName = "" Then
-        If MsgBox("Файл с ниспекциями не был найден." & Chr(10) & String(30, "-") & Chr(10) & _
-         "Да - продолжить" & Chr(10) & "Нет - остановить выполнение макроса", _
-         vbExclamation + vbDefaultButton1 + vbYesNo, "Действие пользователя") = vbNo Then
+        If MsgBox("Р¤Р°Р№Р» СЃ РЅРёСЃРїРµРєС†РёСЏРјРё РЅРµ Р±С‹Р» РЅР°Р№РґРµРЅ." & Chr(10) & String(30, "-") & Chr(10) & _
+         "Р”Р° - РїСЂРѕРґРѕР»Р¶РёС‚СЊ" & Chr(10) & "РќРµС‚ - РѕСЃС‚Р°РЅРѕРІРёС‚СЊ РІС‹РїРѕР»РЅРµРЅРёРµ РјР°РєСЂРѕСЃР°", _
+         vbExclamation + vbDefaultButton1 + vbYesNo, "Р”РµР№СЃС‚РІРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ") = vbNo Then
             Err.Raise 510, mask_file
         End If
         Exit Sub
     End If
     
-    'Способ загрузки данных из файла через ADO подключение
+    'РЎРїРѕСЃРѕР± Р·Р°РіСЂСѓР·РєРё РґР°РЅРЅС‹С… РёР· С„Р°Р№Р»Р° С‡РµСЂРµР· ADO РїРѕРґРєР»СЋС‡РµРЅРёРµ
     Dim ODBC As New CL_ODBC
     If Not ODBC.SetXlFile(OPWB.GetFullFileName) Then Exit Sub
     
-    Application.StatusBar = "Загрузка данных из таблицы: " & sFileName
+    Application.StatusBar = "Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· С‚Р°Р±Р»РёС†С‹: " & sFileName
     Debug.Print Application.StatusBar: DoEvents
     
     ODBC.FROM = sheet_name
@@ -156,10 +156,10 @@ Public Sub LoadData()
     Application.StatusBar = False
     
 Exit Sub
-    'Способ загрузки данных из файла через открытие книги
+    'РЎРїРѕСЃРѕР± Р·Р°РіСЂСѓР·РєРё РґР°РЅРЅС‹С… РёР· С„Р°Р№Р»Р° С‡РµСЂРµР· РѕС‚РєСЂС‹С‚РёРµ РєРЅРёРіРё
     Set WB = OPWB.GetWorkBook
 
-    Application.StatusBar = "Загрузка данных из таблицы: " & sFileName
+    Application.StatusBar = "Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· С‚Р°Р±Р»РёС†С‹: " & sFileName
     Debug.Print Application.StatusBar: DoEvents
 
     mass_data = GetMassInTable
@@ -175,17 +175,17 @@ Private Property Get GetLastDate$(ByRef Decrement As Byte)
     GetLastDate = Format(Date - Decrement, "dd.mm.yy")
 End Property
 
-'Загрузка данных в словарь
+'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РІ СЃР»РѕРІР°СЂСЊ
 Private Sub LoadDataInDict()
     Dim q&, sKey$
     
     For q = LBound(mass_data) To UBound(mass_data)
         
-        If Not IsDate(mass_data(q, cNumDateSubmiss)) Then GoTo continue   'Пропуск инспекций без даты
-        If Not CDate(mass_data(q, cNumDateSubmiss)) > CDate("01.06.2023") Then GoTo continue 'Пропуск инспекций раньше от 01.06.2023
+        If Not IsDate(mass_data(q, cNumDateSubmiss)) Then GoTo continue   'РџСЂРѕРїСѓСЃРє РёРЅСЃРїРµРєС†РёР№ Р±РµР· РґР°С‚С‹
+        If Not CDate(mass_data(q, cNumDateSubmiss)) > CDate("01.06.2023") Then GoTo continue 'РџСЂРѕРїСѓСЃРє РёРЅСЃРїРµРєС†РёР№ СЂР°РЅСЊС€Рµ РѕС‚ 01.06.2023
         
-        sKey = Trim(mass_data(q, cNumInsp_NumSmu))    'исходящий номер сму
-        If sKey = "" Then GoTo continue     'Пропуск пустых инспекций
+        sKey = Trim(mass_data(q, cNumInsp_NumSmu))    'РёСЃС…РѕРґСЏС‰РёР№ РЅРѕРјРµСЂ СЃРјСѓ
+        If sKey = "" Then GoTo continue     'РџСЂРѕРїСѓСЃРє РїСѓСЃС‚С‹С… РёРЅСЃРїРµРєС†РёР№
         
         If Not dict_data.exists(sKey) Then
             dict_data.Add key:=sKey, Item:=CreateObject("Scripting.Dictionary")

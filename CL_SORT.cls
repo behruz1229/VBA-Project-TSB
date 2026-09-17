@@ -10,17 +10,17 @@ Attribute VB_Exposed = False
 Option Explicit
 
 '======================================================
-'Класс для сортировки массивов или словарей
+'РљР»Р°СЃСЃ РґР»СЏ СЃРѕСЂС‚РёСЂРѕРІРєРё РјР°СЃСЃРёРІРѕРІ РёР»Рё СЃР»РѕРІР°СЂРµР№
 '======================================================
 
-'Методы сортировки:
+'РњРµС‚РѕРґС‹ СЃРѕСЂС‚РёСЂРѕРІРєРё:
 Public Enum SortOrder
     set_ASC
     set_DESC
 End Enum
 Private set_sort As SortOrder
 
-'Мутод уствновки и чтения метода сортировки
+'РњСѓС‚РѕРґ СѓСЃС‚РІРЅРѕРІРєРё Рё С‡С‚РµРЅРёСЏ РјРµС‚РѕРґР° СЃРѕСЂС‚РёСЂРѕРІРєРё
 Public Property Let SetSortOrder(ByRef Order As SortOrder)
     set_sort = Order
 End Property
@@ -28,7 +28,7 @@ Public Property Get SetSortOrder() As SortOrder
     SetSortOrder = set_sort
 End Property
 
-'Сортировка словаря(по ключам)\массива(одномерный)
+'РЎРѕСЂС‚РёСЂРѕРІРєР° СЃР»РѕРІР°СЂСЏ(РїРѕ РєР»СЋС‡Р°Рј)\РјР°СЃСЃРёРІР°(РѕРґРЅРѕРјРµСЂРЅС‹Р№)
 Public Function Sort(ByRef val, Optional ByRef field%)
     Dim mass()
     Select Case TypeName(val)
@@ -51,14 +51,14 @@ Public Function Sort(ByRef val, Optional ByRef field%)
         End Select
 End Function
 
-'Проверка размерности массива
+'РџСЂРѕРІРµСЂРєР° СЂР°Р·РјРµСЂРЅРѕСЃС‚Рё РјР°СЃСЃРёРІР°
 Private Property Get isSingledImensMass(ByRef val) As Boolean
     Dim C&: On Error Resume Next
     C = UBound(val, 1)
     isSingledImensMass = IIf(Err.Number = 0, True, False)
 End Property
 
-'Создание подменного массива (индекс по порядку, сортируемое поле)
+'РЎРѕР·РґР°РЅРёРµ РїРѕРґРјРµРЅРЅРѕРіРѕ РјР°СЃСЃРёРІР° (РёРЅРґРµРєСЃ РїРѕ РїРѕСЂСЏРґРєСѓ, СЃРѕСЂС‚РёСЂСѓРµРјРѕРµ РїРѕР»Рµ)
 Private Function GetIndexMass(ByRef val, ByRef field%)
     Dim q&, mass()
     ReDim mass(1 To val.Count, 1 To 2)
@@ -69,7 +69,7 @@ Private Function GetIndexMass(ByRef val, ByRef field%)
     GetIndexMass = mass
 End Function
 
-'Создание коллекции из индексов сортированного массива
+'РЎРѕР·РґР°РЅРёРµ РєРѕР»Р»РµРєС†РёРё РёР· РёРЅРґРµРєСЃРѕРІ СЃРѕСЂС‚РёСЂРѕРІР°РЅРЅРѕРіРѕ РјР°СЃСЃРёРІР°
 Private Function CreateNewCollection(ByRef mass, ByRef val) As Collection
     Dim q&, w&, tmpcoll As New Collection
     For q = LBound(mass) To UBound(mass)
@@ -79,7 +79,7 @@ Private Function CreateNewCollection(ByRef mass, ByRef val) As Collection
     Set CreateNewCollection = tmpcoll
 End Function
 
-'Сортировка одномерного массива методом выборки
+'РЎРѕСЂС‚РёСЂРѕРІРєР° РѕРґРЅРѕРјРµСЂРЅРѕРіРѕ РјР°СЃСЃРёРІР° РјРµС‚РѕРґРѕРј РІС‹Р±РѕСЂРєРё
 Private Sub SelectionSortSingle(ByRef mass)
     Dim i&, j&, iMin&, tmpval
     For i = LBound(mass) To UBound(mass) - 1
@@ -96,7 +96,7 @@ Private Sub SelectionSortSingle(ByRef mass)
     Next
 End Sub
 
-'Сортировка двухмерного массива методом выборки
+'РЎРѕСЂС‚РёСЂРѕРІРєР° РґРІСѓС…РјРµСЂРЅРѕРіРѕ РјР°СЃСЃРёРІР° РјРµС‚РѕРґРѕРј РІС‹Р±РѕСЂРєРё
 Private Sub SelectionSortMulti(ByRef mass, ByRef field%)
     Dim i&, j&, iMin&
     For i = LBound(mass) To UBound(mass) - 1
@@ -119,7 +119,7 @@ Private Sub ReplacingFields(ByRef mass, ByRef iMin&, ByRef i&)
     Next
 End Sub
 
-'Создание нового словаря по отсортированному списку
+'РЎРѕР·РґР°РЅРёРµ РЅРѕРІРѕРіРѕ СЃР»РѕРІР°СЂСЏ РїРѕ РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅРЅРѕРјСѓ СЃРїРёСЃРєСѓ
 Private Function CreateNewDictionary(ByRef massKey(), ByRef val) As Object
     Dim i&, obj As Object: Set obj = CreateObject("Scripting.Dictionary")
     For i = LBound(massKey) To UBound(massKey)

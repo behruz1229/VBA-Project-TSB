@@ -4,7 +4,7 @@ Option Explicit
 '// Version:=1.64
 '//==============================
 
-'Настройки для чтения/записи в конфигурационные файлы:
+'РќР°СЃС‚СЂРѕР№РєРё РґР»СЏ С‡С‚РµРЅРёСЏ/Р·Р°РїРёСЃРё РІ РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРЅС‹Рµ С„Р°Р№Р»С‹:
 #If VBA7 Then
     Declare PtrSafe Function GetPrivateProfileString Lib "kernel32" Alias "GetPrivateProfileStringA" _
             (ByVal lpApplicationName As String, ByVal lpKeyName As Any, ByVal lpDefault As String, _
@@ -34,7 +34,7 @@ Option Explicit
     Declare Function GetKeyState Lib "User32" (ByVal nVirtKey As VirtualKeys) As Integer
 #End If
 
-'====== Функции для определения нажатой клавиши =======
+'====== Р¤СѓРЅРєС†РёРё РґР»СЏ РѕРїСЂРµРґРµР»РµРЅРёСЏ РЅР°Р¶Р°С‚РѕР№ РєР»Р°РІРёС€Рё =======
 Public Enum VirtualKeys    ' Virtual Keys, Standard Set
     VK_LBUTTON = &H1: VK_RBUTTON = &H2: VK_CANCEL = &H3: VK_MBUTTON = &H4
     'VK_MBUTTON = &H4 -  NOT contiguous with L RBUTTON
@@ -66,38 +66,38 @@ Public Enum VirtualKeys    ' Virtual Keys, Standard Set
 End Enum
 
 Public Sub WIF(ByVal sName$, ByVal val$, ByVal sPart$, ByVal filePath$)
-'Функция записи в конфигурационные файлы
-    ' функция ищет в ini файле FilePath$ раздел sPart$ (если раздела нет - он создаётся),
-    ' и добавляет в него параметра с именем sName$ и значением val
+'Р¤СѓРЅРєС†РёСЏ Р·Р°РїРёСЃРё РІ РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРЅС‹Рµ С„Р°Р№Р»С‹
+    ' С„СѓРЅРєС†РёСЏ РёС‰РµС‚ РІ ini С„Р°Р№Р»Рµ FilePath$ СЂР°Р·РґРµР» sPart$ (РµСЃР»Рё СЂР°Р·РґРµР»Р° РЅРµС‚ - РѕРЅ СЃРѕР·РґР°С‘С‚СЃСЏ),
+    ' Рё РґРѕР±Р°РІР»СЏРµС‚ РІ РЅРµРіРѕ РїР°СЂР°РјРµС‚СЂР° СЃ РёРјРµРЅРµРј sName$ Рё Р·РЅР°С‡РµРЅРёРµРј val
     Dim IntRet As Integer: IntRet = WritePrivateProfileString(sPart, sName, val, filePath)
-    'If intRet <> 1 Then 'Неудачное завершение'(Проверка результата записи)
+    'If intRet <> 1 Then 'РќРµСѓРґР°С‡РЅРѕРµ Р·Р°РІРµСЂС€РµРЅРёРµ'(РџСЂРѕРІРµСЂРєР° СЂРµР·СѓР»СЊС‚Р°С‚Р° Р·Р°РїРёСЃРё)
 End Sub
 
 Public Function RIF(ByVal sName$, ByVal DefVal$, ByVal sPart$, ByVal filePath$) As String
-'Функция чтения из конфигурационного файла
-    ' функция ищет в ini файле FilePath$ раздел sPart$,
-    ' и читает из него значение параметра с именем sName$
-    ' Если такой параметр не найден, возвращается значение по умолчанию DefVal$
-    Dim strRet$    'Возвращаемая строка
-    'Получаем значение из файла - если его нет будет возвращен 3й аргумент = strNoValue
+'Р¤СѓРЅРєС†РёСЏ С‡С‚РµРЅРёСЏ РёР· РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРЅРѕРіРѕ С„Р°Р№Р»Р°
+    ' С„СѓРЅРєС†РёСЏ РёС‰РµС‚ РІ ini С„Р°Р№Р»Рµ FilePath$ СЂР°Р·РґРµР» sPart$,
+    ' Рё С‡РёС‚Р°РµС‚ РёР· РЅРµРіРѕ Р·РЅР°С‡РµРЅРёРµ РїР°СЂР°РјРµС‚СЂР° СЃ РёРјРµРЅРµРј sName$
+    ' Р•СЃР»Рё С‚Р°РєРѕР№ РїР°СЂР°РјРµС‚СЂ РЅРµ РЅР°Р№РґРµРЅ, РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ DefVal$
+    Dim strRet$    'Р’РѕР·РІСЂР°С‰Р°РµРјР°СЏ СЃС‚СЂРѕРєР°
+    'РџРѕР»СѓС‡Р°РµРј Р·РЅР°С‡РµРЅРёРµ РёР· С„Р°Р№Р»Р° - РµСЃР»Рё РµРіРѕ РЅРµС‚ Р±СѓРґРµС‚ РІРѕР·РІСЂР°С‰РµРЅ 3Р№ Р°СЂРіСѓРјРµРЅС‚ = strNoValue
     strRet = String(255, Chr(0))
     strRet = Left$(strRet, GetPrivateProfileString(sPart, sName, "", strRet, 255, filePath))
-    'Определяем было найдено значение или нет (если возвращено знач. константы strNoValue то = НЕТ)
-    If strRet = "" Then strRet = DefVal   'Значение не было найдено - возвращаем значение по умолчанию
+    'РћРїСЂРµРґРµР»СЏРµРј Р±С‹Р»Рѕ РЅР°Р№РґРµРЅРѕ Р·РЅР°С‡РµРЅРёРµ РёР»Рё РЅРµС‚ (РµСЃР»Рё РІРѕР·РІСЂР°С‰РµРЅРѕ Р·РЅР°С‡. РєРѕРЅСЃС‚Р°РЅС‚С‹ strNoValue С‚Рѕ = РќР•Рў)
+    If strRet = "" Then strRet = DefVal   'Р—РЅР°С‡РµРЅРёРµ РЅРµ Р±С‹Р»Рѕ РЅР°Р№РґРµРЅРѕ - РІРѕР·РІСЂР°С‰Р°РµРј Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
     RIF = strRet
 End Function
 
 Public Sub CreateDir(ByVal sPathFolder$)
-'Функция создания каталогов полного пути
-    ' функция получает в качестве параметра путь к папке
-    ' если такой папки ещё нет - она создаётся
-    ' может создаваться сразу несколько подпапок
-    SHCreateDirectoryEx Application.hwnd, sPathFolder, ByVal 0&    ' создаём путь
+'Р¤СѓРЅРєС†РёСЏ СЃРѕР·РґР°РЅРёСЏ РєР°С‚Р°Р»РѕРіРѕРІ РїРѕР»РЅРѕРіРѕ РїСѓС‚Рё
+    ' С„СѓРЅРєС†РёСЏ РїРѕР»СѓС‡Р°РµС‚ РІ РєР°С‡РµСЃС‚РІРµ РїР°СЂР°РјРµС‚СЂР° РїСѓС‚СЊ Рє РїР°РїРєРµ
+    ' РµСЃР»Рё С‚Р°РєРѕР№ РїР°РїРєРё РµС‰С‘ РЅРµС‚ - РѕРЅР° СЃРѕР·РґР°С‘С‚СЃСЏ
+    ' РјРѕР¶РµС‚ СЃРѕР·РґР°РІР°С‚СЊСЃСЏ СЃСЂР°Р·Сѓ РЅРµСЃРєРѕР»СЊРєРѕ РїРѕРґРїР°РїРѕРє
+    SHCreateDirectoryEx Application.hwnd, sPathFolder, ByVal 0&    ' СЃРѕР·РґР°С‘Рј РїСѓС‚СЊ
 End Sub
 
 Public Function KeyPressed(ByVal VKey As VirtualKeys) As Boolean
-    'Функция определения зажатия горячих клавиш.
-    'Определение клавишь в ENUM.
+    'Р¤СѓРЅРєС†РёСЏ РѕРїСЂРµРґРµР»РµРЅРёСЏ Р·Р°Р¶Р°С‚РёСЏ РіРѕСЂСЏС‡РёС… РєР»Р°РІРёС€.
+    'РћРїСЂРµРґРµР»РµРЅРёРµ РєР»Р°РІРёС€СЊ РІ ENUM.
     KeyPressed = IIf(GetKeyState(VKey) < 0, True, False)
 End Function
 

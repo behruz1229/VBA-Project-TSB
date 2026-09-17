@@ -11,25 +11,25 @@ Option Explicit
 
 
 
-'Íàñòðîéêè òàáëèöû ìàñòåð ôàéëà:
-Private Const mask_file$ = "ÒÑÁ - Ìîíòàæ ÌÊ - Ìàñòåð ôàéë"
-Private Const sFolder$ = "\\vls.lan\ULVZG-DFS\ÏÒÑ\1.14. ÒÑÁ è ÌÎÒ_Èñïîëíèòåëüíàÿ äîêóìåíòàöèÿ ÊÌ\!Âåäîìîñòü ýëåìåíòîâ"
+'ÐÐ°ÑÑ‚Ñ€Ð¾Ð¹ÐºÐ¸ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹ Ð¼Ð°ÑÑ‚ÐµÑ€ Ñ„Ð°Ð¹Ð»Ð°:
+Private Const mask_file$ = "Ð¢Ð¡Ð‘ - ÐœÐ¾Ð½Ñ‚Ð°Ð¶ ÐœÐš - ÐœÐ°ÑÑ‚ÐµÑ€ Ñ„Ð°Ð¹Ð»"
+Private Const sFolder$ = "\\vls.lan\ULVZG-DFS\ÐŸÐ¢Ð¡\1.14. Ð¢Ð¡Ð‘ Ð¸ ÐœÐžÐ¢_Ð˜ÑÐ¿Ð¾Ð»Ð½Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ð°Ñ Ð´Ð¾ÐºÑƒÐ¼ÐµÐ½Ñ‚Ð°Ñ†Ð¸Ñ ÐšÐœ\!Ð’ÐµÐ´Ð¾Ð¼Ð¾ÑÑ‚ÑŒ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð²"
 
-'Ñòîëáöû ìàñòåð ôàéëà
+'Ð¡Ñ‚Ð¾Ð»Ð±Ñ†Ñ‹ Ð¼Ð°ÑÑ‚ÐµÑ€ Ñ„Ð°Ð¹Ð»Ð°
 Private Const N_MF_DP% = 1          'DP
-Private Const N_MF_Mark% = 4        'Ìàðêà ýëåìåíòîâ
-Private Const N_MF_Name% = 6        'Íàèìåíîâàíèå ýëåìåíòîâ
-Private Const N_MF_Unit% = 7        'Åäèíèöà èçìåðåíèÿ
-Private Const N_MF_Pos% = 8         'Ïîðÿäêîâûé íîìåð ýëåìåíòîâ
-Private Const N_MF_Wght% = 9        'Ìàññà ýëåìåíòà
-Private Const N_MF_NumDlvr% = 14    'Íîìåð ïîñòàâêè ýåìåíòà
-Private Const N_MF_DataDlvr% = 15   'Äàòà ïîñòàâêè ýëåìåíòà
-Private Const N_MF_NumMont% = 20    'Íîìåð ìîíòàæà ýëåìåíòà
-Private Const N_MF_DataMont% = 21   'Äàòà ìîíòàæà ýëåìåíòà
-Private Const N_MF_Note% = 45       'Ïðèìå÷àíèå
+Private Const N_MF_Mark% = 4        'ÐœÐ°Ñ€ÐºÐ° ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð²
+Private Const N_MF_Name% = 6        'ÐÐ°Ð¸Ð¼ÐµÐ½Ð¾Ð²Ð°Ð½Ð¸Ðµ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð²
+Private Const N_MF_Unit% = 7        'Ð•Ð´Ð¸Ð½Ð¸Ñ†Ð° Ð¸Ð·Ð¼ÐµÑ€ÐµÐ½Ð¸Ñ
+Private Const N_MF_Pos% = 8         'ÐŸÐ¾Ñ€ÑÐ´ÐºÐ¾Ð²Ñ‹Ð¹ Ð½Ð¾Ð¼ÐµÑ€ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð²
+Private Const N_MF_Wght% = 9        'ÐœÐ°ÑÑÐ° ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð°
+Private Const N_MF_NumDlvr% = 14    'ÐÐ¾Ð¼ÐµÑ€ Ð¿Ð¾ÑÑ‚Ð°Ð²ÐºÐ¸ ÑÐµÐ¼ÐµÐ½Ñ‚Ð°
+Private Const N_MF_DataDlvr% = 15   'Ð”Ð°Ñ‚Ð° Ð¿Ð¾ÑÑ‚Ð°Ð²ÐºÐ¸ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð°
+Private Const N_MF_NumMont% = 20    'ÐÐ¾Ð¼ÐµÑ€ Ð¼Ð¾Ð½Ñ‚Ð°Ð¶Ð° ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð°
+Private Const N_MF_DataMont% = 21   'Ð”Ð°Ñ‚Ð° Ð¼Ð¾Ð½Ñ‚Ð°Ð¶Ð° ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð°
+Private Const N_MF_Note% = 45       'ÐŸÑ€Ð¸Ð¼ÐµÑ‡Ð°Ð½Ð¸Ðµ
 
 
-'Ïåðåìåííûå êëàññà:
+'ÐŸÐµÑ€ÐµÐ¼ÐµÐ½Ð½Ñ‹Ðµ ÐºÐ»Ð°ÑÑÐ°:
 Private sTitle$
 Private sFileName$
 Private mass_data()
@@ -38,7 +38,7 @@ Private dict_dp As Object
 Private WB As Excel.Workbook
 Private SH As Excel.Worksheet
 
-'Êîíñòðóêòîð è äåñòðóêòîð êëàññà
+'ÐšÐ¾Ð½ÑÑ‚Ñ€ÑƒÐºÑ‚Ð¾Ñ€ Ð¸ Ð´ÐµÑÑ‚Ñ€ÑƒÐºÑ‚Ð¾Ñ€ ÐºÐ»Ð°ÑÑÐ°
 Private Sub Class_Initialize()
     Set dict_data = CreateObject("Scripting.Dictionary")
     Set dict_dp = CreateObject("Scripting.Dictionary")
@@ -49,17 +49,17 @@ Private Sub Class_Terminate()
 End Sub
 
 
-'Ñëîâàðü ñ ýëåìåíòàìè
+'Ð¡Ð»Ð¾Ð²Ð°Ñ€ÑŒ Ñ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð°Ð¼Ð¸
 Public Property Get DictData() As Object
     Set DictData = dict_data
 End Property
 
-'Ñëîâàðü äëÿ ñâîäíîé
+'Ð¡Ð»Ð¾Ð²Ð°Ñ€ÑŒ Ð´Ð»Ñ ÑÐ²Ð¾Ð´Ð½Ð¾Ð¹
 Public Property Get dictDataDP() As Object
     Set dictDataDP = dict_dp
 End Property
 
-'Ïîèñê îòêðûòèå òàáëèöû ñ äàííûìè
+'ÐŸÐ¾Ð¸ÑÐº Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚Ð¸Ðµ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹ Ñ Ð´Ð°Ð½Ð½Ñ‹Ð¼Ð¸
 Public Sub LoadData()
     
     Dim OPWB As New CL_OPENFILE
@@ -79,10 +79,10 @@ Public Sub LoadData()
     
 End Sub
 
-'Ñ÷èòûâàíèå äàííûõ èç òàáëèöû: Master file
+'Ð¡Ñ‡Ð¸Ñ‚Ñ‹Ð²Ð°Ð½Ð¸Ðµ Ð´Ð°Ð½Ð½Ñ‹Ñ… Ð¸Ð· Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹: Master file
 Private Sub ReadWorksheets()
       
-    'Ïåðåáîð âñåõ ëèñòîâ è ñ÷èòûâàíèå äàííûõ óìíûõ òàáëèö â ñëîâàðü
+    'ÐŸÐµÑ€ÐµÐ±Ð¾Ñ€ Ð²ÑÐµÑ… Ð»Ð¸ÑÑ‚Ð¾Ð² Ð¸ ÑÑ‡Ð¸Ñ‚Ñ‹Ð²Ð°Ð½Ð¸Ðµ Ð´Ð°Ð½Ð½Ñ‹Ñ… ÑƒÐ¼Ð½Ñ‹Ñ… Ñ‚Ð°Ð±Ð»Ð¸Ñ† Ð² ÑÐ»Ð¾Ð²Ð°Ñ€ÑŒ
     For Each SH In WB.Worksheets
         If Not SH.ListObjects.Count = 1 Then GoTo continue
         If SH.Name = "X-YY0000" Then GoTo continue
@@ -96,7 +96,7 @@ continue:
     
 End Sub
 
-'Ñ÷èòûâàíèå äàííûõ èç smart-òàáëèö
+'Ð¡Ñ‡Ð¸Ñ‚Ñ‹Ð²Ð°Ð½Ð¸Ðµ Ð´Ð°Ð½Ð½Ñ‹Ñ… Ð¸Ð· smart-Ñ‚Ð°Ð±Ð»Ð¸Ñ†
 Private Sub ReadListObjects(ByRef SH As Excel.Worksheet)
     Dim LO As Excel.ListObject
     
@@ -105,8 +105,8 @@ Private Sub ReadListObjects(ByRef SH As Excel.Worksheet)
         
         sTitle = Split(SH.Name)(0)
         
-        Application.StatusBar = "Çàãðóçêà ëèñòà: " & SH.Name & _
-            ", Ñòðîê äàííûõ òàáëèöû: " & LO.DataBodyRange.Rows.Count
+        Application.StatusBar = "Ð—Ð°Ð³Ñ€ÑƒÐ·ÐºÐ° Ð»Ð¸ÑÑ‚Ð°: " & SH.Name & _
+            ", Ð¡Ñ‚Ñ€Ð¾Ðº Ð´Ð°Ð½Ð½Ñ‹Ñ… Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹: " & LO.DataBodyRange.Rows.Count
         Debug.Print Application.StatusBar: DoEvents
         
         mass_data = LO.DataBodyRange.Value
@@ -117,7 +117,7 @@ continue:
     
 End Sub
 
-'Çàãðóçêà äàííûõ â ñëîâàðü
+'Ð—Ð°Ð³Ñ€ÑƒÐ·ÐºÐ° Ð´Ð°Ð½Ð½Ñ‹Ñ… Ð² ÑÐ»Ð¾Ð²Ð°Ñ€ÑŒ
 Private Sub LoadMassToDict()
     Dim q&, sKey$
     
@@ -125,23 +125,23 @@ Private Sub LoadMassToDict()
         If Not IsNumeric(mass_data(q, N_MF_Wght)) Then GoTo continue
         If mass_data(q, N_MF_Wght) = 0 Then GoTo continue
         
-        LoadDictData q          'Ýëåìåíòû äëÿ áàçû äàííûõ
-        LoadDictDataFromPivot q    'Äàííûå äëÿ ñâîäíîé òàáëèöû
+        LoadDictData q          'Ð­Ð»ÐµÐ¼ÐµÐ½Ñ‚Ñ‹ Ð´Ð»Ñ Ð±Ð°Ð·Ñ‹ Ð´Ð°Ð½Ð½Ñ‹Ñ…
+        LoadDictDataFromPivot q    'Ð”Ð°Ð½Ð½Ñ‹Ðµ Ð´Ð»Ñ ÑÐ²Ð¾Ð´Ð½Ð¾Ð¹ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹
         
 continue:
     Next
 
 End Sub
 
-'Äàííûå äëÿ ñâîäíîé òàáëèöû
+'Ð”Ð°Ð½Ð½Ñ‹Ðµ Ð´Ð»Ñ ÑÐ²Ð¾Ð´Ð½Ð¾Ð¹ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹
 Private Sub LoadDictDataFromPivot(ByRef q&)
     Dim sKey$, coll_keys As New Collection
     
-    '1. Ëèñò òàáëèöû â ìàñòåð ôàéëå
+    '1. Ð›Ð¸ÑÑ‚ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹ Ð² Ð¼Ð°ÑÑ‚ÐµÑ€ Ñ„Ð°Ð¹Ð»Ðµ
     sKey = Trim_(SH.Name)
     coll_keys.Add sKey
     
-    '2. Íîìåð DP
+    '2. ÐÐ¾Ð¼ÐµÑ€ DP
     sKey = Trim_(mass_data(q, N_MF_DP))
     If sKey = "" Then sKey = "NO_DP"
     coll_keys.Add sKey
@@ -150,14 +150,14 @@ Private Sub LoadDictDataFromPivot(ByRef q&)
     
 End Sub
 
-'Ôîðìèðîâàíèå óðîâíåé âëîæåíèÿ â ñëîâàðü
+'Ð¤Ð¾Ñ€Ð¼Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ðµ ÑƒÑ€Ð¾Ð²Ð½ÐµÐ¹ Ð²Ð»Ð¾Ð¶ÐµÐ½Ð¸Ñ Ð² ÑÐ»Ð¾Ð²Ð°Ñ€ÑŒ
 Private Sub InsertLevelDict(ByRef q&, ByRef dict As Object, ByRef coll_keys As Collection, Optional ByVal level% = 0)
     Dim sKey$
     
-    level = level + 1       'Ñ÷åò÷èê óðîâíåé âëîæåíèÿ
-    sKey = coll_keys(level)  'Êëþ÷ ñëîâàðÿ èç êîëëåêöèè
+    level = level + 1       'Ð¡Ñ‡ÐµÑ‚Ñ‡Ð¸Ðº ÑƒÑ€Ð¾Ð²Ð½ÐµÐ¹ Ð²Ð»Ð¾Ð¶ÐµÐ½Ð¸Ñ
+    sKey = coll_keys(level)  'ÐšÐ»ÑŽÑ‡ ÑÐ»Ð¾Ð²Ð°Ñ€Ñ Ð¸Ð· ÐºÐ¾Ð»Ð»ÐµÐºÑ†Ð¸Ð¸
     
-    If level = coll_keys.Count Then  'Âñòàâëåíèå çíà÷åíèÿ ñ÷åò÷èêà (øò.) íà ïîñëåäíåì êëþ÷å
+    If level = coll_keys.Count Then  'Ð’ÑÑ‚Ð°Ð²Ð»ÐµÐ½Ð¸Ðµ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ñ ÑÑ‡ÐµÑ‚Ñ‡Ð¸ÐºÐ° (ÑˆÑ‚.) Ð½Ð° Ð¿Ð¾ÑÐ»ÐµÐ´Ð½ÐµÐ¼ ÐºÐ»ÑŽÑ‡Ðµ
         If Not dict.exists(sKey) Then dict.Add key:=sKey, Item:=CreateObject("Scripting.Dictionary")
         AddPivotData q, dict(sKey)
     Else
@@ -166,49 +166,49 @@ Private Sub InsertLevelDict(ByRef q&, ByRef dict As Object, ByRef coll_keys As C
     End If
 End Sub
 
-'Ôîðìèðîâàíèå äàííûõ ñëîâàðÿ äëÿ ñâîäíîé òàáëèöû
+'Ð¤Ð¾Ñ€Ð¼Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ðµ Ð´Ð°Ð½Ð½Ñ‹Ñ… ÑÐ»Ð¾Ð²Ð°Ñ€Ñ Ð´Ð»Ñ ÑÐ²Ð¾Ð´Ð½Ð¾Ð¹ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹
 Private Sub AddPivotData(ByRef q&, ByRef dict As Object)
     
-    '1. Âñåãî
+    '1. Ð’ÑÐµÐ³Ð¾
     dict(idx_pv_all) = dict(idx_pv_all) + mass_data(q, N_MF_Wght)
     
-    '2. Ïîñòàâëåíî
+    '2. ÐŸÐ¾ÑÑ‚Ð°Ð²Ð»ÐµÐ½Ð¾
     If Not mass_data(q, N_MF_NumDlvr) = Empty And Not mass_data(q, N_MF_NumDlvr) = False Then
         dict(idx_pv_dlvr) = dict(idx_pv_dlvr) + mass_data(q, N_MF_Wght)
     Else
         dict(idx_pv_dlvr) = dict(idx_pv_dlvr) + 0
     End If
         
-    '3. Ñìîíòèðîâàííî
+    '3. Ð¡Ð¼Ð¾Ð½Ñ‚Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð½Ð¾
     If IsDate(mass_data(q, N_MF_DataMont)) Then
         dict(idx_pv_mount) = dict(idx_pv_mount) + mass_data(q, N_MF_Wght)
     Else
         dict(idx_pv_mount) = dict(idx_pv_mount) + 0
     End If
     
-    '4. Îñòàòîê îò ïîñòàâëåííîãî
+    '4. ÐžÑÑ‚Ð°Ñ‚Ð¾Ðº Ð¾Ñ‚ Ð¿Ð¾ÑÑ‚Ð°Ð²Ð»ÐµÐ½Ð½Ð¾Ð³Ð¾
     dict(idx_pv_remain) = dict(idx_pv_dlvr) - dict(idx_pv_mount)
     
 End Sub
 
-'Ýëåìåíòû äëÿ áàçû äàííûõ ïî ýëåìåíòàì äëÿ âåäîìîñòè
+'Ð­Ð»ÐµÐ¼ÐµÐ½Ñ‚Ñ‹ Ð´Ð»Ñ Ð±Ð°Ð·Ñ‹ Ð´Ð°Ð½Ð½Ñ‹Ñ… Ð¿Ð¾ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð°Ð¼ Ð´Ð»Ñ Ð²ÐµÐ´Ð¾Ð¼Ð¾ÑÑ‚Ð¸
 Private Sub LoadDictData(ByRef q&)
     Dim sKey$
     
-    'Ïðîâåðêà íàëè÷èÿ íîìåðà ïîñòàâêè ýëåìåíòà
+    'ÐŸÑ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð½Ð°Ð»Ð¸Ñ‡Ð¸Ñ Ð½Ð¾Ð¼ÐµÑ€Ð° Ð¿Ð¾ÑÑ‚Ð°Ð²ÐºÐ¸ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð°
     If mass_data(q, N_MF_NumDlvr) = Empty Then Exit Sub
     If mass_data(q, N_MF_NumDlvr) = False Then Exit Sub
     
-    'Êëþ÷ (Íàèìåíîâàíèå ëèñòà, íîìåð dp, ìàðêà ýëåìåíòà, íàèìåíîâàíèå ýëåìåíòà, âåñ)
+    'ÐšÐ»ÑŽÑ‡ (ÐÐ°Ð¸Ð¼ÐµÐ½Ð¾Ð²Ð°Ð½Ð¸Ðµ Ð»Ð¸ÑÑ‚Ð°, Ð½Ð¾Ð¼ÐµÑ€ dp, Ð¼Ð°Ñ€ÐºÐ° ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð°, Ð½Ð°Ð¸Ð¼ÐµÐ½Ð¾Ð²Ð°Ð½Ð¸Ðµ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð°, Ð²ÐµÑ)
     sKey = GetKeyElement(q)
     
-    'Çàïîëåíèå ñëîâàðÿ äàííûìè èç ìàñòåð ôàéëà
+    'Ð—Ð°Ð¿Ð¾Ð»ÐµÐ½Ð¸Ðµ ÑÐ»Ð¾Ð²Ð°Ñ€Ñ Ð´Ð°Ð½Ð½Ñ‹Ð¼Ð¸ Ð¸Ð· Ð¼Ð°ÑÑ‚ÐµÑ€ Ñ„Ð°Ð¹Ð»Ð°
     If Not dict_data.exists(sKey) Then dict_data.Add key:=sKey, Item:=New Collection
     dict_data(sKey).Add tmpdict(q)
     
 End Sub
 
-'Äàííûå äëÿ áàçû äàííûõ ìàòåðèàëîâ ÷àñòè ìàñòåð ôàéëà
+'Ð”Ð°Ð½Ð½Ñ‹Ðµ Ð´Ð»Ñ Ð±Ð°Ð·Ñ‹ Ð´Ð°Ð½Ð½Ñ‹Ñ… Ð¼Ð°Ñ‚ÐµÑ€Ð¸Ð°Ð»Ð¾Ð² Ñ‡Ð°ÑÑ‚Ð¸ Ð¼Ð°ÑÑ‚ÐµÑ€ Ñ„Ð°Ð¹Ð»Ð°
 Public Function tmpdict(ByRef q&) As Object
     Set tmpdict = CreateObject("Scripting.Dictionary")
     
@@ -235,7 +235,7 @@ Public Function tmpdict(ByRef q&) As Object
     
 End Function
 
-'Êëþ÷ äëÿ ñëîâàðÿ ñ ýëåìåíòàìè
+'ÐšÐ»ÑŽÑ‡ Ð´Ð»Ñ ÑÐ»Ð¾Ð²Ð°Ñ€Ñ Ñ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð°Ð¼Ð¸
 Private Property Get GetKeyElement$(ByRef q&)
     Dim sKey$
     sKey = sTitle & vbTab
@@ -246,7 +246,7 @@ Private Property Get GetKeyElement$(ByRef q&)
     GetKeyElement = sKey
 End Property
 
-'Ôóíêöèÿ óáðàòü ïðîáåëû âíà÷àëå è êîíöå è çàìåíà 10, 13, 160 ñèìâîëîâ íà ïðîáåë (33)
+'Ð¤ÑƒÐ½ÐºÑ†Ð¸Ñ ÑƒÐ±Ñ€Ð°Ñ‚ÑŒ Ð¿Ñ€Ð¾Ð±ÐµÐ»Ñ‹ Ð²Ð½Ð°Ñ‡Ð°Ð»Ðµ Ð¸ ÐºÐ¾Ð½Ñ†Ðµ Ð¸ Ð·Ð°Ð¼ÐµÐ½Ð° 10, 13, 160 ÑÐ¸Ð¼Ð²Ð¾Ð»Ð¾Ð² Ð½Ð° Ð¿Ñ€Ð¾Ð±ÐµÐ» (33)
 Private Property Get Trim_$(ByVal sTXT)
     If IsError(sTXT) Then Exit Property
     If InStr(1, sTXT, Chr(10), vbBinaryCompare) > 0 Then sTXT = Replace(sTXT, Chr(10), Chr(32))

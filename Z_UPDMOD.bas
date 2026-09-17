@@ -6,28 +6,28 @@ Private Const sPartSet$ = "Macro setting for update"
 
 Private cntrow&
 
-'Экспорт модулей кода
+'Р­РєСЃРїРѕСЂС‚ РјРѕРґСѓР»РµР№ РєРѕРґР°
 Private Sub ExportModulesAndClasses()
     Dim vbComp As Object, sFolder$
     
-    cntrow = 0  'Сброс счетчика колличества строк
+    cntrow = 0  'РЎР±СЂРѕСЃ СЃС‡РµС‚С‡РёРєР° РєРѕР»Р»РёС‡РµСЃС‚РІР° СЃС‚СЂРѕРє
     
-    'Каталог для экспорта, проверка/создание
+    'РљР°С‚Р°Р»РѕРі РґР»СЏ СЌРєСЃРїРѕСЂС‚Р°, РїСЂРѕРІРµСЂРєР°/СЃРѕР·РґР°РЅРёРµ
     sFolder = ThisWorkbook.Path & "\Macro"
     If Dir(sFolder, vbDirectory) = "" Then CreateDir sFolder
         
     For Each vbComp In ThisWorkbook.VBProject.VBComponents
-        Select Case vbComp.Type 'Экпорт стандартных модулей, классов, форм и код в ЭтаКнига
-            Case Is = 1, 2, 3, (100 And vbComp.Name = "ЭтаКнига")
+        Select Case vbComp.Type 'Р­РєРїРѕСЂС‚ СЃС‚Р°РЅРґР°СЂС‚РЅС‹С… РјРѕРґСѓР»РµР№, РєР»Р°СЃСЃРѕРІ, С„РѕСЂРј Рё РєРѕРґ РІ Р­С‚Р°РљРЅРёРіР°
+            Case Is = 1, 2, 3, (100 And vbComp.Name = "Р­С‚Р°РљРЅРёРіР°")
                 ExportCodeModule vbComp, sFolder
         End Select
     Next
 
-    Debug.Print "Общее колличество выгруженных строк кода в данной книге: " & cntrow
+    Debug.Print "РћР±С‰РµРµ РєРѕР»Р»РёС‡РµСЃС‚РІРѕ РІС‹РіСЂСѓР¶РµРЅРЅС‹С… СЃС‚СЂРѕРє РєРѕРґР° РІ РґР°РЅРЅРѕР№ РєРЅРёРіРµ: " & cntrow
     
 End Sub
 
-'Экспорт модулей кода
+'Р­РєСЃРїРѕСЂС‚ РјРѕРґСѓР»РµР№ РєРѕРґР°
 Private Sub ExportCodeModule(ByRef vbComp As Object, ByRef sFolder$)
 
     If vbComp.Type = 100 Then
@@ -39,13 +39,13 @@ Private Sub ExportCodeModule(ByRef vbComp As Object, ByRef sFolder$)
     
 End Sub
 
-'Экспорт кода из модуля ЭтаКнига в текстовый файл sFile
+'Р­РєСЃРїРѕСЂС‚ РєРѕРґР° РёР· РјРѕРґСѓР»СЏ Р­С‚Р°РљРЅРёРіР° РІ С‚РµРєСЃС‚РѕРІС‹Р№ С„Р°Р№Р» sFile
 Private Sub ExportCodeToTXT(ByRef vbComp As Object, ByRef sFolder$)
     Dim q&, cnt_line&, Line
 
     With vbComp.CodeModule
         cnt_line = .CountOfLines
-        Open sFolder & "\ЭтаКнига.txt" For Output As 1
+        Open sFolder & "\Р­С‚Р°РљРЅРёРіР°.txt" For Output As 1
             For q = 1 To cnt_line
                  Print #1, .Lines(q, 1)
             Next
@@ -54,7 +54,7 @@ Private Sub ExportCodeToTXT(ByRef vbComp As Object, ByRef sFolder$)
     
 End Sub
 
-'Логирование процесса, суммирование общего кол-во строк кода
+'Р›РѕРіРёСЂРѕРІР°РЅРёРµ РїСЂРѕС†РµСЃСЃР°, СЃСѓРјРјРёСЂРѕРІР°РЅРёРµ РѕР±С‰РµРіРѕ РєРѕР»-РІРѕ СЃС‚СЂРѕРє РєРѕРґР°
 Private Sub logExportCode(ByRef vbComp As Object)
     Dim tmpstr$: tmpstr = "SAVED: " & vbComp.Name & vbTab
     tmpstr = tmpstr & "TYPE: " & vbComp.Type & vbTab

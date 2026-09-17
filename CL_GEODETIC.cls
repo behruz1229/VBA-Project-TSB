@@ -9,32 +9,32 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-'Настройки таблицы входного контроля
-Private Const mask_file$ = "геодезия сводная"
-Private Const sFolder$ = "\\vls.lan\ULVZG-DFS\ПТС\1.14. ТСБ и МОТ_Исполнительная документация КМ\!Ведомость элементов"
+'РќР°СЃС‚СЂРѕР№РєРё С‚Р°Р±Р»РёС†С‹ РІС…РѕРґРЅРѕРіРѕ РєРѕРЅС‚СЂРѕР»СЏ
+Private Const mask_file$ = "РіРµРѕРґРµР·РёСЏ СЃРІРѕРґРЅР°СЏ"
+Private Const sFolder$ = "\\vls.lan\ULVZG-DFS\РџРўРЎ\1.14. РўРЎР‘ Рё РњРћРў_РСЃРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ РґРѕРєСѓРјРµРЅС‚Р°С†РёСЏ РљРњ\!Р’РµРґРѕРјРѕСЃС‚СЊ СЌР»РµРјРµРЅС‚РѕРІ"
 
-Private Const sheet_name$ = "Сводная"       'Имя листа на которой таблица
+Private Const sheet_name$ = "РЎРІРѕРґРЅР°СЏ"       'РРјСЏ Р»РёСЃС‚Р° РЅР° РєРѕС‚РѕСЂРѕР№ С‚Р°Р±Р»РёС†Р°
 Private Const start_row As Byte = 2
 
-'Столбцы таблицы геодезия сводная:
-Private Const L_Title$ = "A"     'Титул установка
-Private Const L_DP$ = "B"     'Номер DP
-Private Const L_WghtDvlp$ = "C"  'Масса поставленного материала
-Private Const L_WghtMont$ = "D"  'Масса смонтированного материала
+'РЎС‚РѕР»Р±С†С‹ С‚Р°Р±Р»РёС†С‹ РіРµРѕРґРµР·РёСЏ СЃРІРѕРґРЅР°СЏ:
+Private Const L_Title$ = "A"     'РўРёС‚СѓР» СѓСЃС‚Р°РЅРѕРІРєР°
+Private Const L_DP$ = "B"     'РќРѕРјРµСЂ DP
+Private Const L_WghtDvlp$ = "C"  'РњР°СЃСЃР° РїРѕСЃС‚Р°РІР»РµРЅРЅРѕРіРѕ РјР°С‚РµСЂРёР°Р»Р°
+Private Const L_WghtMont$ = "D"  'РњР°СЃСЃР° СЃРјРѕРЅС‚РёСЂРѕРІР°РЅРЅРѕРіРѕ РјР°С‚РµСЂРёР°Р»Р°
 
-Private Const L_GeoSurvey$ = "E" 'Геодезическая съемка
-Private Const L_GeoPnt$ = "F"    'ИГС отрисована
-Private Const L_GeoAgrd$ = "G"   'ИГС на согласовании
-Private Const L_GeoAgrmnt$ = "H" 'ИГС согласованы
+Private Const L_GeoSurvey$ = "E" 'Р“РµРѕРґРµР·РёС‡РµСЃРєР°СЏ СЃСЉРµРјРєР°
+Private Const L_GeoPnt$ = "F"    'РР“РЎ РѕС‚СЂРёСЃРѕРІР°РЅР°
+Private Const L_GeoAgrd$ = "G"   'РР“РЎ РЅР° СЃРѕРіР»Р°СЃРѕРІР°РЅРёРё
+Private Const L_GeoAgrmnt$ = "H" 'РР“РЎ СЃРѕРіР»Р°СЃРѕРІР°РЅС‹
 
-'Переменные класса:
+'РџРµСЂРµРјРµРЅРЅС‹Рµ РєР»Р°СЃСЃР°:
 Private sFileName$
 Private mass_data()
 Private dict_data As Object
 Private WB As Excel.Workbook
 
 
-'Конструктор и деструктор класса
+'РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Рё РґРµСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР°
 Private Sub Class_Initialize()
     Set dict_data = CreateObject("Scripting.Dictionary")
 End Sub
@@ -43,7 +43,7 @@ Private Sub Class_Terminate()
 End Sub
 
 
-'Номера столбцов
+'РќРѕРјРµСЂР° СЃС‚РѕР»Р±С†РѕРІ
 Private Property Get cNumTitle%()
     cNumTitle = Columns(L_Title).Column
 End Property
@@ -70,7 +70,7 @@ Private Property Get cNumGeoAgrmnt%()
 End Property
 
 
-'Словарь сводной таблицы
+'РЎР»РѕРІР°СЂСЊ СЃРІРѕРґРЅРѕР№ С‚Р°Р±Р»РёС†С‹
 Public Property Get DictData() As Object
     Set DictData = dict_data
 End Property
@@ -79,7 +79,7 @@ Public Property Set DictData(dict As Object)
 End Property
 
 
-'Загрузка данных в словарь данных из таблицы мастер файла ADO
+'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РІ СЃР»РѕРІР°СЂСЊ РґР°РЅРЅС‹С… РёР· С‚Р°Р±Р»РёС†С‹ РјР°СЃС‚РµСЂ С„Р°Р№Р»Р° ADO
 Public Sub LoadData2()
         
     Dim ODBC As New CL_ODBC
@@ -91,7 +91,7 @@ Public Sub LoadData2()
     sFileName = OPWB.GetFileName
     If sFileName = "" Then Exit Sub 'Err.Raise 513, mask_file
     
-    Application.StatusBar = "Загрузка данных из файла: " & sFileName
+    Application.StatusBar = "Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· С„Р°Р№Р»Р°: " & sFileName
     Debug.Print Application.StatusBar: DoEvents
     
     If Not ODBC.SetXlFile(OPWB.GetFullFileName) Then Exit Sub
@@ -103,13 +103,13 @@ Public Sub LoadData2()
     Set OPWB = Nothing
     Set ODBC = Nothing
     
-    LoadDataInDict  'Загрузка данных из массива в словарь
+    LoadDataInDict  'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· РјР°СЃСЃРёРІР° РІ СЃР»РѕРІР°СЂСЊ
     
     Application.StatusBar = False
     
 End Sub
 
-'Загрузка данных в словарь данных из таблицы мастер файла
+'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РІ СЃР»РѕРІР°СЂСЊ РґР°РЅРЅС‹С… РёР· С‚Р°Р±Р»РёС†С‹ РјР°СЃС‚РµСЂ С„Р°Р№Р»Р°
 Public Sub LoadData()
 
     Dim OPWB As New CL_OPENFILE
@@ -122,21 +122,21 @@ Public Sub LoadData()
     
     Set WB = OPWB.GetWorkBook
     
-    Application.StatusBar = "Загрузка данных из файла: " & sFileName
+    Application.StatusBar = "Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· С„Р°Р№Р»Р°: " & sFileName
     Debug.Print Application.StatusBar: DoEvents
     
-    mass_data = GetMassData  'Загрузка данных из файла в массив
+    mass_data = GetMassData  'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· С„Р°Р№Р»Р° РІ РјР°СЃСЃРёРІ
     
     Set WB = Nothing
     Set OPWB = Nothing
     
-    LoadDataInDict  'Загрузка данных из массива в словарь
+    LoadDataInDict  'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· РјР°СЃСЃРёРІР° РІ СЃР»РѕРІР°СЂСЊ
     
     Application.StatusBar = False
     
 End Sub
 
-'Считывание массива данных из диапазона таблицы
+'РЎС‡РёС‚С‹РІР°РЅРёРµ РјР°СЃСЃРёРІР° РґР°РЅРЅС‹С… РёР· РґРёР°РїР°Р·РѕРЅР° С‚Р°Р±Р»РёС†С‹
 Private Function GetMassData()
     With WB.Worksheets(sheet_name)
         If .FilterMode Then .ShowAllData
@@ -145,12 +145,12 @@ Private Function GetMassData()
     End With
 End Function
 
-'Последняя строка данных в таблице
+'РџРѕСЃР»РµРґРЅСЏСЏ СЃС‚СЂРѕРєР° РґР°РЅРЅС‹С… РІ С‚Р°Р±Р»РёС†Рµ
 Private Property Get cnt_row&()
     cnt_row = WB.Worksheets(sheet_name).Cells(Rows.Count, cNumTitle).End(xlUp).Row
 End Property
 
-'Загрузка данных из массива в словарь
+'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· РјР°СЃСЃРёРІР° РІ СЃР»РѕРІР°СЂСЊ
 Private Sub LoadDataInDict()
     Dim q&, sKey$, mass_keys$(), dict As Object
     
@@ -166,7 +166,7 @@ Private Sub LoadDataInDict()
         If Not dict.exists(sKey) Then GoTo continue
         Set dict = dict(sKey)
         
-        'Суммы, столбцы: Геодезическая съемка, ИГС отрисована, ИГС на согласовании, ИГС согласованы
+        'РЎСѓРјРјС‹, СЃС‚РѕР»Р±С†С‹: Р“РµРѕРґРµР·РёС‡РµСЃРєР°СЏ СЃСЉРµРјРєР°, РР“РЎ РѕС‚СЂРёСЃРѕРІР°РЅР°, РР“РЎ РЅР° СЃРѕРіР»Р°СЃРѕРІР°РЅРёРё, РР“РЎ СЃРѕРіР»Р°СЃРѕРІР°РЅС‹
         dict(idx_pv_geo_survey) = dict(idx_pv_geo_survey) + GetGeoSurvey(q)
         dict(idx_pv_geo_isdrawn) = dict(idx_pv_geo_isdrawn) + GetGeoPnt(q)
         dict(idx_pv_geo_underapp) = dict(idx_pv_geo_underapp) + GetGeoAgrd(q)
@@ -175,12 +175,12 @@ Private Sub LoadDataInDict()
 continue:
     Next
     
-    'Расчет, столбцы: Ведется СМР, Готовая физика под геодезию (съемка)
+    'Р Р°СЃС‡РµС‚, СЃС‚РѕР»Р±С†С‹: Р’РµРґРµС‚СЃСЏ РЎРњР , Р“РѕС‚РѕРІР°СЏ С„РёР·РёРєР° РїРѕРґ РіРµРѕРґРµР·РёСЋ (СЃСЉРµРјРєР°)
     DoCalculationFromPivot
     
 End Sub
 
-'Расчет значений по геодезии
+'Р Р°СЃС‡РµС‚ Р·РЅР°С‡РµРЅРёР№ РїРѕ РіРµРѕРґРµР·РёРё
 Private Sub DoCalculationFromPivot()
     Dim i: For Each i In dict_data.items
         calc_dp i
@@ -193,14 +193,14 @@ Private Sub calc_dp(ByRef dict)
     Next
 End Sub
 
-'Ведется СМР '"F" => "=D5-G5-ЕСЛИ(H5="н/п";D5;H5)"
+'Р’РµРґРµС‚СЃСЏ РЎРњР  '"F" => "=D5-G5-Р•РЎР›Р(H5="РЅ/Рї";D5;H5)"
 Private Property Get GetWorkIsUnderway#(ByRef dict)
     Dim val#
     val = dict(idx_pv_mount) - dict(idx_pv_geo_readphis) - dict(idx_pv_geo_survey)
     GetWorkIsUnderway = IIf(val < 0, 0, val)
 End Property
 
-'Готовая физика под геодезию '"G" => "=ЕСЛИ(D5/C5>0,8;D5-ЕСЛИ(H5="н/п";D5;H5);0)"
+'Р“РѕС‚РѕРІР°СЏ С„РёР·РёРєР° РїРѕРґ РіРµРѕРґРµР·РёСЋ '"G" => "=Р•РЎР›Р(D5/C5>0,8;D5-Р•РЎР›Р(H5="РЅ/Рї";D5;H5);0)"
 Private Property Get isDelivDivMont(ByRef dict) As Boolean
     If dict(idx_pv_dlvr) = 0 Then Exit Property
     If dict(idx_pv_mount) / dict(idx_pv_dlvr) > 0.8 Then isDelivDivMont = True
@@ -215,7 +215,7 @@ Private Property Get GetComletedPhisic#(ByRef dict)
     End If
 End Property
 
-'Данные весов из таблицы
+'Р”Р°РЅРЅС‹Рµ РІРµСЃРѕРІ РёР· С‚Р°Р±Р»РёС†С‹
 Private Property Get GetGeoSurvey#(ByRef q&)
     If Not IsNumeric(mass_data(q, cNumGeoSurvey)) Then Exit Property
     GetGeoSurvey = mass_data(q, cNumGeoSurvey) * 1000

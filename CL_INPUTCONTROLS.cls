@@ -10,33 +10,33 @@ Attribute VB_Exposed = False
 Option Explicit
 
 '======================================================
-' Класс для поиска файлов журнала входного контроля
-' Все настройки данных входного контроля находятся здесь
+' РљР»Р°СЃСЃ РґР»СЏ РїРѕРёСЃРєР° С„Р°Р№Р»РѕРІ Р¶СѓСЂРЅР°Р»Р° РІС…РѕРґРЅРѕРіРѕ РєРѕРЅС‚СЂРѕР»СЏ
+' Р’СЃРµ РЅР°СЃС‚СЂРѕР№РєРё РґР°РЅРЅС‹С… РІС…РѕРґРЅРѕРіРѕ РєРѕРЅС‚СЂРѕР»СЏ РЅР°С…РѕРґСЏС‚СЃСЏ Р·РґРµСЃСЊ
 '======================================================
 
-'Каталог с файлами входного контроля
-Private Const sFolder$ = "\\vls.lan\ULVZG-DFS\ПТС\1.14. ТСБ и МОТ_Исполнительная документация КМ\!Ведомость элементов\Входной контроль\db"
+'РљР°С‚Р°Р»РѕРі СЃ С„Р°Р№Р»Р°РјРё РІС…РѕРґРЅРѕРіРѕ РєРѕРЅС‚СЂРѕР»СЏ
+Private Const sFolder$ = "\\vls.lan\ULVZG-DFS\РџРўРЎ\1.14. РўРЎР‘ Рё РњРћРў_РСЃРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ РґРѕРєСѓРјРµРЅС‚Р°С†РёСЏ РљРњ\!Р’РµРґРѕРјРѕСЃС‚СЊ СЌР»РµРјРµРЅС‚РѕРІ\Р’С…РѕРґРЅРѕР№ РєРѕРЅС‚СЂРѕР»СЊ\db"
 
-'Столбцы таблицы
-Private Const L_Mark$ = "B"         'Марка
-Private Const L_Name$ = "C"         'Наименование
-Private Const L_Pos$ = "D"          'Позиция
+'РЎС‚РѕР»Р±С†С‹ С‚Р°Р±Р»РёС†С‹
+Private Const L_Mark$ = "B"         'РњР°СЂРєР°
+Private Const L_Name$ = "C"         'РќР°РёРјРµРЅРѕРІР°РЅРёРµ
+Private Const L_Pos$ = "D"          'РџРѕР·РёС†РёСЏ
 
-Private Const L_Wght_MF$ = "E"      'Вес по мастер файлу
-Private Const L_Wght_VK$ = "F"      'Вес по входному контролю
+Private Const L_Wght_MF$ = "E"      'Р’РµСЃ РїРѕ РјР°СЃС‚РµСЂ С„Р°Р№Р»Сѓ
+Private Const L_Wght_VK$ = "F"      'Р’РµСЃ РїРѕ РІС…РѕРґРЅРѕРјСѓ РєРѕРЅС‚СЂРѕР»СЋ
 
-Private Const L_Insp_Num$ = "G"     'Номер инспекции
-Private Const L_Aorpi_Name$ = "H"   'Наименование АоРПИ
-Private Const L_Aorpi_Date$ = "I"   'Дата АоРПИ
-Private Const L_Sert_Name$ = "J"    'Паспорт качества изделия
-Private Const L_Sert_Date$ = "K"    'Дата паспорта
+Private Const L_Insp_Num$ = "G"     'РќРѕРјРµСЂ РёРЅСЃРїРµРєС†РёРё
+Private Const L_Aorpi_Name$ = "H"   'РќР°РёРјРµРЅРѕРІР°РЅРёРµ РђРѕР РџР
+Private Const L_Aorpi_Date$ = "I"   'Р”Р°С‚Р° РђРѕР РџР
+Private Const L_Sert_Name$ = "J"    'РџР°СЃРїРѕСЂС‚ РєР°С‡РµСЃС‚РІР° РёР·РґРµР»РёСЏ
+Private Const L_Sert_Date$ = "K"    'Р”Р°С‚Р° РїР°СЃРїРѕСЂС‚Р°
 
-'Настройка таблицы
-Private Const start_row As Byte = 4 'Стартовая строка данных в таблице
+'РќР°СЃС‚СЂРѕР№РєР° С‚Р°Р±Р»РёС†С‹
+Private Const start_row As Byte = 4 'РЎС‚Р°СЂС‚РѕРІР°СЏ СЃС‚СЂРѕРєР° РґР°РЅРЅС‹С… РІ С‚Р°Р±Р»РёС†Рµ
 Private Const sPrefixFile$ = "REG_"
 
 
-'Переменные класса
+'РџРµСЂРµРјРµРЅРЅС‹Рµ РєР»Р°СЃСЃР°
 Private sFileName$
 Private mass_data()
 Private mass_loadtitles()
@@ -46,7 +46,7 @@ Private dict_data As Object
 Private sWB_Name$
 Private sSH_Name$
 
-'Индексы в словаре с данными
+'РРЅРґРµРєСЃС‹ РІ СЃР»РѕРІР°СЂРµ СЃ РґР°РЅРЅС‹РјРё
 Public Enum data_inputcontrols
     idx_ic_mark
     idx_ic_name
@@ -62,7 +62,7 @@ End Enum
 
 
 
-'конструктор и деструктор класса
+'РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Рё РґРµСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР°
 Private Sub Class_Initialize()
     Set dict_data = CreateObject("Scripting.Dictionary")
 End Sub
@@ -71,7 +71,7 @@ Private Sub Class_Terminate()
 End Sub
 
 
-'Номера столбцов таблицы
+'РќРѕРјРµСЂР° СЃС‚РѕР»Р±С†РѕРІ С‚Р°Р±Р»РёС†С‹
 Private Property Get cNumMark%()
     cNumMark = Columns(L_Mark).Column
 End Property
@@ -105,7 +105,7 @@ Private Property Get cNumSert_Date%()
 End Property
 
 
-'Словарь с данными для сводной таблицы
+'РЎР»РѕРІР°СЂСЊ СЃ РґР°РЅРЅС‹РјРё РґР»СЏ СЃРІРѕРґРЅРѕР№ С‚Р°Р±Р»РёС†С‹
 Public Property Get DictData() As Object
     Set DictData = dict_data
 End Property
@@ -122,34 +122,34 @@ continue:
     Set tmpdict = Nothing
 End Property
 
-'Установка списка загружаемых титулов через строку
+'РЈСЃС‚Р°РЅРѕРІРєР° СЃРїРёСЃРєР° Р·Р°РіСЂСѓР¶Р°РµРјС‹С… С‚РёС‚СѓР»РѕРІ С‡РµСЂРµР· СЃС‚СЂРѕРєСѓ
 Public Property Let SetMassLoaded_Title(ByRef mass_title)
     mass_loadtitles = mass_title
 End Property
 
-'Установка загружаемых dp разделитель vbTab
+'РЈСЃС‚Р°РЅРѕРІРєР° Р·Р°РіСЂСѓР¶Р°РµРјС‹С… dp СЂР°Р·РґРµР»РёС‚РµР»СЊ vbTab
 Public Property Let SetListLoaded_DP(ByRef mass_dp)
     list_load_dp = Join(mass_dp, vbTab) & vbTab
 End Property
 
-'Считывание массива данных из диапазона таблицы
+'РЎС‡РёС‚С‹РІР°РЅРёРµ РјР°СЃСЃРёРІР° РґР°РЅРЅС‹С… РёР· РґРёР°РїР°Р·РѕРЅР° С‚Р°Р±Р»РёС†С‹
 Private Function GetMassData(ByRef SH As Excel.Worksheet)
     GetMassData = SH.Range(L_Mark & start_row).CurrentRegion. _
         Offset(start_row - 1).Resize(cnt_row(SH) - start_row + 1).Value
 End Function
 
-'Последняя строка данных в таблице
+'РџРѕСЃР»РµРґРЅСЏСЏ СЃС‚СЂРѕРєР° РґР°РЅРЅС‹С… РІ С‚Р°Р±Р»РёС†Рµ
 Private Property Get cnt_row&(ByRef SH As Excel.Worksheet)
     cnt_row = SH.Cells(Rows.Count, cNumMark).End(xlUp).Row
 End Property
 
-'Проверка наличия листа в книге
+'РџСЂРѕРІРµСЂРєР° РЅР°Р»РёС‡РёСЏ Р»РёСЃС‚Р° РІ РєРЅРёРіРµ
 Private Function shExists(ByRef WB As Excel.Workbook, ByRef shName$) As Boolean
     On Error Resume Next
     shExists = WB.Worksheets(shName).Name = shName
 End Function
 
-'Загрузка данных через ADO
+'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… С‡РµСЂРµР· ADO
 Public Sub LoadData2()
     Dim q&, ODBC As New CL_ODBC, SH, mass
     
@@ -161,8 +161,8 @@ Public Sub LoadData2()
         
         sWB_Name = mass_loadtitles(q)
         
-        Application.StatusBar = "Загрузка данных входного контроля из файла: " _
-            & sWB_Name & " | (" & q + 1 & " из " & UBound(mass_loadtitles) + 1 & ")"
+        Application.StatusBar = "Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РІС…РѕРґРЅРѕРіРѕ РєРѕРЅС‚СЂРѕР»СЏ РёР· С„Р°Р№Р»Р°: " _
+            & sWB_Name & " | (" & q + 1 & " РёР· " & UBound(mass_loadtitles) + 1 & ")"
         Debug.Print Application.StatusBar: DoEvents
         
         For Each SH In ODBC.GetCollSheets
@@ -183,7 +183,7 @@ continue:
     
 End Sub
 
-'Основной метод загрузки данных по входному контролю
+'РћСЃРЅРѕРІРЅРѕР№ РјРµС‚РѕРґ Р·Р°РіСЂСѓР·РєРё РґР°РЅРЅС‹С… РїРѕ РІС…РѕРґРЅРѕРјСѓ РєРѕРЅС‚СЂРѕР»СЋ
 Public Sub LoadData()
     Dim q&, OPWB As CL_OPENFILE, WB As Excel.Workbook
     
@@ -200,8 +200,8 @@ Public Sub LoadData()
         
         sWB_Name = WB.Name
         
-        Application.StatusBar = "Загрузка данных входного контроля из файла: " _
-            & sWB_Name & " | (" & q + 1 & " из " & UBound(mass_loadtitles) + 1 & ")"
+        Application.StatusBar = "Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РІС…РѕРґРЅРѕРіРѕ РєРѕРЅС‚СЂРѕР»СЏ РёР· С„Р°Р№Р»Р°: " _
+            & sWB_Name & " | (" & q + 1 & " РёР· " & UBound(mass_loadtitles) + 1 & ")"
         Debug.Print Application.StatusBar: DoEvents
         
         LoadTable WB
@@ -217,7 +217,7 @@ continue:
     
 End Sub
 
-'Загрузка данных из таблицы. Чтение данных листов книги
+'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· С‚Р°Р±Р»РёС†С‹. Р§С‚РµРЅРёРµ РґР°РЅРЅС‹С… Р»РёСЃС‚РѕРІ РєРЅРёРіРё
 Private Sub LoadTable(ByRef WB As Excel.Workbook)
     Dim SH As Excel.Worksheet
     
@@ -234,7 +234,7 @@ continue:
     Next
 End Sub
 
-'Загрузка данных в словарь
+'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РІ СЃР»РѕРІР°СЂСЊ
 Private Sub LoadDataInDict()
     Dim q&, sKey$
         
@@ -252,7 +252,7 @@ continue:
     
 End Sub
 
-'Ключ для словаря с элементами титул, dp, марка, наименование, позиция, вес
+'РљР»СЋС‡ РґР»СЏ СЃР»РѕРІР°СЂСЏ СЃ СЌР»РµРјРµРЅС‚Р°РјРё С‚РёС‚СѓР», dp, РјР°СЂРєР°, РЅР°РёРјРµРЅРѕРІР°РЅРёРµ, РїРѕР·РёС†РёСЏ, РІРµСЃ
 Private Property Get GetKeyElement$(ByRef q&)
     Dim sKey$
     sKey = GetTitle(sWB_Name) & vbTab
@@ -264,7 +264,7 @@ Private Property Get GetKeyElement$(ByRef q&)
     GetKeyElement = sKey
 End Property
 
-'Данные в словаре
+'Р”Р°РЅРЅС‹Рµ РІ СЃР»РѕРІР°СЂРµ
 Private Function tmpdict(ByRef q&) As Object
     Set tmpdict = CreateObject("Scripting.Dictionary")
     With tmpdict
@@ -284,7 +284,7 @@ Private Function tmpdict(ByRef q&) As Object
     End With
 End Function
 
-'Поиск даты в строке материала
+'РџРѕРёСЃРє РґР°С‚С‹ РІ СЃС‚СЂРѕРєРµ РјР°С‚РµСЂРёР°Р»Р°
 Private Property Get GetTitle$(ByRef sTXT)
     Dim objExec As Object, tmpstr$
     Set objExec = RegExp(sTXT, "[A-Z]\d-\d{2}-?[\d\w]*")
@@ -295,11 +295,11 @@ Private Property Get GetTitle$(ByRef sTXT)
     Set objExec = Nothing
 End Property
 
-'Свойство создания (настроек) объекта регулярных выражений
+'РЎРІРѕР№СЃС‚РІРѕ СЃРѕР·РґР°РЅРёСЏ (РЅР°СЃС‚СЂРѕРµРє) РѕР±СЉРµРєС‚Р° СЂРµРіСѓР»СЏСЂРЅС‹С… РІС‹СЂР°Р¶РµРЅРёР№
 Private Property Get RegExp(ByRef sTXT, ByRef sMask$) As Object
     With CreateObject("VBScript.RegExp")
-        .Global = True 'Поиск по всему тексту
-        .Pattern = sMask 'Шаблон поиска
+        .Global = True 'РџРѕРёСЃРє РїРѕ РІСЃРµРјСѓ С‚РµРєСЃС‚Сѓ
+        .Pattern = sMask 'РЁР°Р±Р»РѕРЅ РїРѕРёСЃРєР°
         .IgnoreCase = True
         Set RegExp = .Execute(sTXT)
     End With

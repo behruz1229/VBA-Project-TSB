@@ -9,23 +9,23 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-'Настройки архивирования файла
+'РќР°СЃС‚СЂРѕР№РєРё Р°СЂС…РёРІРёСЂРѕРІР°РЅРёСЏ С„Р°Р№Р»Р°
 Private Const sPath7z$ = "C:\Program Files\7-Zip\7z.exe"
 Private Const Arhiv As String = " a -t7z -ssw -mmt4 -mx9 -sdel "
 
-'Имя каталога для резервного копирования файлов
-Private Const sFolderNameBackUpFiles$ = "Резервные копии файлов"
+'РРјСЏ РєР°С‚Р°Р»РѕРіР° РґР»СЏ СЂРµР·РµСЂРІРЅРѕРіРѕ РєРѕРїРёСЂРѕРІР°РЅРёСЏ С„Р°Р№Р»РѕРІ
+Private Const sFolderNameBackUpFiles$ = "Р РµР·РµСЂРІРЅС‹Рµ РєРѕРїРёРё С„Р°Р№Р»РѕРІ"
 
-'Число файлов в резервном каталоге
+'Р§РёСЃР»Рѕ С„Р°Р№Р»РѕРІ РІ СЂРµР·РµСЂРІРЅРѕРј РєР°С‚Р°Р»РѕРіРµ
 Private Const CntBackUpFiles As Byte = 40
 
-'Переменные класса
+'РџРµСЂРµРјРµРЅРЅС‹Рµ РєР»Р°СЃСЃР°
 Private ps$
 Private sFolder$
 Private objFSO As Object
 Private WshShell As Object
 
-'Констрктор и деструктор класса
+'РљРѕРЅСЃС‚СЂРєС‚РѕСЂ Рё РґРµСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР°
 Private Sub Class_Initialize()
     Set objFSO = CreateObject("Scripting.FileSystemObject")
     Set WshShell = CreateObject("WScript.Shell")
@@ -37,22 +37,22 @@ Private Sub Class_Terminate()
     Set WshShell = Nothing
 End Sub
 
-'Резервное копирование таблицы
+'Р РµР·РµСЂРІРЅРѕРµ РєРѕРїРёСЂРѕРІР°РЅРёРµ С‚Р°Р±Р»РёС†С‹
 Public Sub GetBackUpTable()
     Dim q&, sFile$
     
     If ThisWorkbook.ReadOnly Then Exit Sub
     
-    Application.StatusBar = "Резервное копирование: " & ThisWorkbook.Name & "..."
+    Application.StatusBar = "Р РµР·РµСЂРІРЅРѕРµ РєРѕРїРёСЂРѕРІР°РЅРёРµ: " & ThisWorkbook.Name & "..."
     Debug.Print Application.StatusBar: DoEvents
     
-    'Создание каталога для резервного копирования если его нет
+    'РЎРѕР·РґР°РЅРёРµ РєР°С‚Р°Р»РѕРіР° РґР»СЏ СЂРµР·РµСЂРІРЅРѕРіРѕ РєРѕРїРёСЂРѕРІР°РЅРёСЏ РµСЃР»Рё РµРіРѕ РЅРµС‚
     If Not objFSO.FolderExists(sFolder) Then CreateDir sFolder
     
-    'Удаление старых файлов
+    'РЈРґР°Р»РµРЅРёРµ СЃС‚Р°СЂС‹С… С„Р°Р№Р»РѕРІ
     KeepTheLastTenFiles sFolder
     
-    'Формирование имени файла
+    'Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ РёРјРµРЅРё С„Р°Р№Р»Р°
     sFile = sFolder & ps & Format(Date, "yyyy_mm_dd")
     sFile = sFile & "_" & Format(Time, "hh-mm-ss")
     sFile = sFile & "_" & Environ("USERNAME")
@@ -62,13 +62,13 @@ Public Sub GetBackUpTable()
     Application.DisplayAlerts = False
     Application.EnableEvents = False
     
-    'Резервное копирование файла
+    'Р РµР·РµСЂРІРЅРѕРµ РєРѕРїРёСЂРѕРІР°РЅРёРµ С„Р°Р№Р»Р°
     ThisWorkbook.SaveCopyAs Filename:=sFile
     
-    'Изменение формата на архивный .xlsb (не использовать)
+    'РР·РјРµРЅРµРЅРёРµ С„РѕСЂРјР°С‚Р° РЅР° Р°СЂС…РёРІРЅС‹Р№ .xlsb (РЅРµ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ)
     'ChangeXlFormat sFile
     
-    'Архивирование файла
+    'РђСЂС…РёРІРёСЂРѕРІР°РЅРёРµ С„Р°Р№Р»Р°
     GetCompressionFile sFile
     
     Application.ScreenUpdating = True
@@ -76,11 +76,11 @@ Public Sub GetBackUpTable()
     Application.EnableEvents = True
     Application.StatusBar = False
     
-    Debug.Print "Резервное копирование: OK!"
+    Debug.Print "Р РµР·РµСЂРІРЅРѕРµ РєРѕРїРёСЂРѕРІР°РЅРёРµ: OK!"
 
 End Sub
 
-'Удаление старых файлов
+'РЈРґР°Р»РµРЅРёРµ СЃС‚Р°СЂС‹С… С„Р°Р№Р»РѕРІ
 Private Sub KeepTheLastTenFiles(ByRef sFoler$)
     Dim iFile As Object, dict_files As Object, dtKey
     
@@ -88,19 +88,19 @@ Private Sub KeepTheLastTenFiles(ByRef sFoler$)
     
     Set dict_files = CreateObject("Scripting.Dictionary")
     
-    'Чтение каталога с файлами
+    'Р§С‚РµРЅРёРµ РєР°С‚Р°Р»РѕРіР° СЃ С„Р°Р№Р»Р°РјРё
     For Each iFile In objFSO.GetFolder(sFoler).Files
         dtKey = iFile.DateLastModified
         If Not dict_files.exists(dtKey) Then dict_files.Add key:=dtKey, Item:=iFile.Path
     Next
     
-    'Сортировка файлов по дате создания
+    'РЎРѕСЂС‚РёСЂРѕРІРєР° С„Р°Р№Р»РѕРІ РїРѕ РґР°С‚Рµ СЃРѕР·РґР°РЅРёСЏ
     Dim SRT As New CL_SORT
     SRT.SetSortOrder = set_ASC
     Set dict_files = SRT.Sort(dict_files)
     Set SRT = Nothing
     
-    'Удаление самых старых файлов
+    'РЈРґР°Р»РµРЅРёРµ СЃР°РјС‹С… СЃС‚Р°СЂС‹С… С„Р°Р№Р»РѕРІ
     For Each dtKey In dict_files.items
         If objFSO.GetFolder(sFoler).Files.Count < CntBackUpFiles Then Exit For
         objFSO.DeleteFile dtKey, True
@@ -110,7 +110,7 @@ Private Sub KeepTheLastTenFiles(ByRef sFoler$)
     
 End Sub
 
-'Смена формата на xlsb (архивный формат)
+'РЎРјРµРЅР° С„РѕСЂРјР°С‚Р° РЅР° xlsb (Р°СЂС…РёРІРЅС‹Р№ С„РѕСЂРјР°С‚)
 Private Sub ChangeXlFormat(ByRef sFile$)
     Dim WB As Excel.Workbook
     Set WB = Workbooks.Open(sFile, False, True)
@@ -121,13 +121,13 @@ Private Sub ChangeXlFormat(ByRef sFile$)
     Set WB = Nothing
 End Sub
 
-'Архивирование файла
+'РђСЂС…РёРІРёСЂРѕРІР°РЅРёРµ С„Р°Р№Р»Р°
 Private Sub GetCompressionFile(ByRef sFile$)
     Dim sFileArj$, sShell$, RetCode&
     
     If Not objFSO.FileExists(sPath7z) Then Exit Sub
     
-    'Формирование коммандной строки
+    'Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ РєРѕРјРјР°РЅРґРЅРѕР№ СЃС‚СЂРѕРєРё
     sFileArj = Left(sFile, InStrRev(sFile, ".") - 1) '& ".zip"
     sShell = Chr(34) & sPath7z & Chr(34) & Arhiv
     sShell = sShell & Chr(34) & sFileArj & Chr(34) & " "

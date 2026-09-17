@@ -10,14 +10,14 @@ Attribute VB_Exposed = False
 Option Explicit
 
 '======================================================
-'Класс открытия и чтения файлов с таблицами Excel средствами ADO
+'РљР»Р°СЃСЃ РѕС‚РєСЂС‹С‚РёСЏ Рё С‡С‚РµРЅРёСЏ С„Р°Р№Р»РѕРІ СЃ С‚Р°Р±Р»РёС†Р°РјРё Excel СЃСЂРµРґСЃС‚РІР°РјРё ADO
 '======================================================
 
-'Настройки подключения
+'РќР°СЃС‚СЂРѕР№РєРё РїРѕРґРєР»СЋС‡РµРЅРёСЏ
 Private Const sDrv$ = "Driver={Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)};ReadOnly=1;"
 
 
-'Переменные класса
+'РџРµСЂРµРјРµРЅРЅС‹Рµ РєР»Р°СЃСЃР°
 Private ps$, sTmpFolder$, sSrcFile$, sLdtFile$
 Private str_from_$
 Private str_filter_$
@@ -33,7 +33,7 @@ Private objFSO As Object
 Private coll_fields_name As Collection
 Private coll_select_flds As Collection
 
-'Тип блокировки для Recordset, который будет открыт
+'РўРёРї Р±Р»РѕРєРёСЂРѕРІРєРё РґР»СЏ Recordset, РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµС‚ РѕС‚РєСЂС‹С‚
 Private Enum LockType
     adLockReadOnly = 1
     adLockPessimistic
@@ -52,20 +52,20 @@ Private Enum State
     adStateFetching = 8     'The rows of the object are being retrieved
 End Enum
 
-'Определяет режим доступа для изменения данных в сеансе.
+'РћРїСЂРµРґРµР»СЏРµС‚ СЂРµР¶РёРј РґРѕСЃС‚СѓРїР° РґР»СЏ РёР·РјРµРЅРµРЅРёСЏ РґР°РЅРЅС‹С… РІ СЃРµР°РЅСЃРµ.
 Private Enum Mode
-    adModeUnknown = 0           'режим доступа не установлен или не может быть определён (по умолчанию).
-    adModeRead = 1              'режим только для чтения.
-    adModeWrite = 2             'режим только для записи.
-    adModeReadWrite = 3         'режим для чтения и записи.
-    adModeShareDenyRead = 4     'не разрешает открывать соединение на чтение другим пользователям.
-    adModeShareDenyWrite = 8    'не разрешает открывать соединение на запись другим пользователям.
-    adModeShareExclusive = 12   'не разрешает открывать соединение другим пользователям.
-    adModeShareDenyNone = 16    'разрешает открывать соединение с любым видом доступа другим пользователям.
+    adModeUnknown = 0           'СЂРµР¶РёРј РґРѕСЃС‚СѓРїР° РЅРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅ РёР»Рё РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕРїСЂРµРґРµР»С‘РЅ (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ).
+    adModeRead = 1              'СЂРµР¶РёРј С‚РѕР»СЊРєРѕ РґР»СЏ С‡С‚РµРЅРёСЏ.
+    adModeWrite = 2             'СЂРµР¶РёРј С‚РѕР»СЊРєРѕ РґР»СЏ Р·Р°РїРёСЃРё.
+    adModeReadWrite = 3         'СЂРµР¶РёРј РґР»СЏ С‡С‚РµРЅРёСЏ Рё Р·Р°РїРёСЃРё.
+    adModeShareDenyRead = 4     'РЅРµ СЂР°Р·СЂРµС€Р°РµС‚ РѕС‚РєСЂС‹РІР°С‚СЊ СЃРѕРµРґРёРЅРµРЅРёРµ РЅР° С‡С‚РµРЅРёРµ РґСЂСѓРіРёРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРј.
+    adModeShareDenyWrite = 8    'РЅРµ СЂР°Р·СЂРµС€Р°РµС‚ РѕС‚РєСЂС‹РІР°С‚СЊ СЃРѕРµРґРёРЅРµРЅРёРµ РЅР° Р·Р°РїРёСЃСЊ РґСЂСѓРіРёРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРј.
+    adModeShareExclusive = 12   'РЅРµ СЂР°Р·СЂРµС€Р°РµС‚ РѕС‚РєСЂС‹РІР°С‚СЊ СЃРѕРµРґРёРЅРµРЅРёРµ РґСЂСѓРіРёРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРј.
+    adModeShareDenyNone = 16    'СЂР°Р·СЂРµС€Р°РµС‚ РѕС‚РєСЂС‹РІР°С‚СЊ СЃРѕРµРґРёРЅРµРЅРёРµ СЃ Р»СЋР±С‹Рј РІРёРґРѕРј РґРѕСЃС‚СѓРїР° РґСЂСѓРіРёРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРј.
 End Enum
 
 
-'Конструктор и деструктор класса
+'РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Рё РґРµСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР°
 Private Sub Class_Initialize()
     
     Set CN = CreateObject("ADODB.Connection")
@@ -74,7 +74,7 @@ Private Sub Class_Initialize()
     
     Set objFSO = CreateObject("Scripting.FileSystemObject")
     
-    'Создание временного каталога
+    'РЎРѕР·РґР°РЅРёРµ РІСЂРµРјРµРЅРЅРѕРіРѕ РєР°С‚Р°Р»РѕРіР°
     ps = Application.PathSeparator
     sTmpFolder = ThisWorkbook.Path & ps & "tmp_"
     If Not objFSO.FolderExists(sTmpFolder) Then CreateDir sTmpFolder
@@ -95,7 +95,7 @@ Private Sub Class_Terminate()
     Set coll_fields_name = Nothing
     Set coll_select_flds = Nothing
     
-    'Удаление временного каталога
+    'РЈРґР°Р»РµРЅРёРµ РІСЂРµРјРµРЅРЅРѕРіРѕ РєР°С‚Р°Р»РѕРіР°
     If objFSO.FolderExists(sTmpFolder) Then objFSO.DeleteFolder sTmpFolder, True
     Set objFSO = Nothing
     
@@ -103,12 +103,12 @@ Private Sub Class_Terminate()
     
 End Sub
 
-'Вывод файла из которого загружаются данные
+'Р’С‹РІРѕРґ С„Р°Р№Р»Р° РёР· РєРѕС‚РѕСЂРѕРіРѕ Р·Р°РіСЂСѓР¶Р°СЋС‚СЃСЏ РґР°РЅРЅС‹Рµ
 Public Property Get GetLoadedFileName$()
     GetLoadedFileName = sLdtFile
 End Property
 
-'Исполнение запроса к базе данных
+'РСЃРїРѕР»РЅРµРЅРёРµ Р·Р°РїСЂРѕСЃР° Рє Р±Р°Р·Рµ РґР°РЅРЅС‹С…
 Private Property Let Set_Recordset(ByRef sSql$)
     If debug_mode Then Debug.Print "sql: " & sSql
     If Not RS.State = adStateClosed Then RS.Close
@@ -116,21 +116,21 @@ Private Property Let Set_Recordset(ByRef sSql$)
 End Property
 
 
-'Установка имени файла excel
+'РЈСЃС‚Р°РЅРѕРІРєР° РёРјРµРЅРё С„Р°Р№Р»Р° excel
 Public Function SetXlFile(ByVal sFileName$) As Boolean
     
-    'Проверка наличия файла
+    'РџСЂРѕРІРµСЂРєР° РЅР°Р»РёС‡РёСЏ С„Р°Р№Р»Р°
     If objFSO.FileExists(ThisWorkbook.Path & ps & objFSO.GetFileName(sFileName)) Then
         sFileName = ThisWorkbook.Path & ps & objFSO.GetFileName(sFileName)
     End If
     If Not objFSO.FileExists(sFileName) Then Exit Function
     
-    'Копирование файла источника данных
+    'РљРѕРїРёСЂРѕРІР°РЅРёРµ С„Р°Р№Р»Р° РёСЃС‚РѕС‡РЅРёРєР° РґР°РЅРЅС‹С…
     sLdtFile = sFileName
     sSrcFile = sTmpFolder & ps & objFSO.GetFileName(sFileName)
     objFSO.CopyFile sFileName, sSrcFile, True
     
-    'Загрузка файла для чтения
+    'Р—Р°РіСЂСѓР·РєР° С„Р°Р№Р»Р° РґР»СЏ С‡С‚РµРЅРёСЏ
     If Not CN.State = adStateClosed Then CN.Close
     CN.Open sDrv & "DBQ=" & sSrcFile & ";", -1
     
@@ -144,7 +144,7 @@ Public Function SetXlFile(ByVal sFileName$) As Boolean
     
 End Function
 
-'Возвращает колекцию листов из подключенной книги
+'Р’РѕР·РІСЂР°С‰Р°РµС‚ РєРѕР»РµРєС†РёСЋ Р»РёСЃС‚РѕРІ РёР· РїРѕРґРєР»СЋС‡РµРЅРЅРѕР№ РєРЅРёРіРё
 Public Function GetCollSheets() As Collection
     Dim SH, tmpstr$
     
@@ -167,12 +167,12 @@ continue:
 End Function
 
 
-'Возвращает имя столбца по его индексу
+'Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ СЃС‚РѕР»Р±С†Р° РїРѕ РµРіРѕ РёРЅРґРµРєСЃСѓ
 Public Property Get GetFieldName$(ByRef idx_fld%)
     GetFieldName$ = GetCollFields(idx_fld)
 End Property
 
-'Возвращает коллекцию имен столбцов в таблице
+'Р’РѕР·РІСЂР°С‰Р°РµС‚ РєРѕР»Р»РµРєС†РёСЋ РёРјРµРЅ СЃС‚РѕР»Р±С†РѕРІ РІ С‚Р°Р±Р»РёС†Рµ
 Public Property Get GetCollFields() As Collection
     If coll_fields_name.Count = 0 Then LoadFieldCollection
     Set GetCollFields = coll_fields_name
@@ -186,7 +186,7 @@ Private Sub LoadFieldCollection()
 End Sub
 
 
-'Установка коллекции возвращаемых столбцов в запросе SQL (SELECT ...)
+'РЈСЃС‚Р°РЅРѕРІРєР° РєРѕР»Р»РµРєС†РёРё РІРѕР·РІСЂР°С‰Р°РµРјС‹С… СЃС‚РѕР»Р±С†РѕРІ РІ Р·Р°РїСЂРѕСЃРµ SQL (SELECT ...)
 Public Property Set SELECT_(ByRef coll As Collection)
     Set coll_select_flds = coll
 End Property
@@ -201,32 +201,32 @@ Private Property Get str_fields_$()
     str_fields_ = "SELECT " & Left(tmpstr, Len(tmpstr) - 2)
 End Property
 
-'Установка имени листа с таблицей
+'РЈСЃС‚Р°РЅРѕРІРєР° РёРјРµРЅРё Р»РёСЃС‚Р° СЃ С‚Р°Р±Р»РёС†РµР№
 Public Property Let FROM(ByRef sFrom$)
     str_from_ = " FROM [" & sFrom & "$]"
     DeleteParam
 End Property
 
-'Фильтрация строк
+'Р¤РёР»СЊС‚СЂР°С†РёСЏ СЃС‚СЂРѕРє
 Public Property Let WHERE(ByRef sFltr$)
     str_filter_ = " WHERE " & sFltr
 End Property
 
-'Сортировка строк
+'РЎРѕСЂС‚РёСЂРѕРІРєР° СЃС‚СЂРѕРє
 Public Property Let ORDER_BY(ByRef sOrder$)
     str_order_ = " ORDER BY " & sOrder
 End Property
 
-'Группировка строк
+'Р“СЂСѓРїРїРёСЂРѕРІРєР° СЃС‚СЂРѕРє
 Public Property Let GROUP_BY(ByRef sGroup$)
     str_group_ = " GROUP BY " & sGroup
 End Property
 
-'Загрузка данных из таблицы
+'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· С‚Р°Р±Р»РёС†С‹
 Public Function Execute(Optional ByVal sSql$ = "")
     Dim mass
     
-    If sSql = "" Then 'Пример: "SELECT * FROM [WB$]"
+    If sSql = "" Then 'РџСЂРёРјРµСЂ: "SELECT * FROM [WB$]"
         sSql = str_fields_ & str_from_
         sSql = sSql & IIf(str_filter_ = "", "", str_filter_)
         sSql = sSql & IIf(str_order_ = "", "", str_order_)
@@ -245,18 +245,18 @@ Public Function Execute(Optional ByVal sSql$ = "")
     
 End Function
 
-'Переворачивание массива данных строки столбцы
+'РџРµСЂРµРІРѕСЂР°С‡РёРІР°РЅРёРµ РјР°СЃСЃРёРІР° РґР°РЅРЅС‹С… СЃС‚СЂРѕРєРё СЃС‚РѕР»Р±С†С‹
 Private Function Transpose_(ByRef mass)
     Dim q&, w&, tmpmass()
     
     Select Case UBound(mass)
-        Case Is = 0 'Преобразование одномерного массива
+        Case Is = 0 'РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РѕРґРЅРѕРјРµСЂРЅРѕРіРѕ РјР°СЃСЃРёРІР°
             ReDim tmpmass(1 To UBound(mass, 2) + 1)
             For q = LBound(tmpmass) To UBound(tmpmass)
                 tmpmass(q) = cNullToEmpty(mass(0, q - 1))
             Next
             
-        Case Else 'Преобразование двумерного массива
+        Case Else 'РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РґРІСѓРјРµСЂРЅРѕРіРѕ РјР°СЃСЃРёРІР°
             ReDim tmpmass(1 To UBound(mass, 2) + 1, 1 To UBound(mass, 1) + 1)
             For q = LBound(tmpmass) To UBound(tmpmass)
                 For w = LBound(tmpmass, 2) To UBound(tmpmass, 2)
@@ -270,18 +270,18 @@ Private Function Transpose_(ByRef mass)
     
 End Function
 
-'Обвертование строки в одинарные кавычки если есть пробелы
+'РћР±РІРµСЂС‚РѕРІР°РЅРёРµ СЃС‚СЂРѕРєРё РІ РѕРґРёРЅР°СЂРЅС‹Рµ РєР°РІС‹С‡РєРё РµСЃР»Рё РµСЃС‚СЊ РїСЂРѕР±РµР»С‹
 Private Property Get GetSqlString$(ByRef sTXT$)
     'GetSqlString = "`" & sTXT & "`"
     GetSqlString = IIf(InStr(1, sTXT, Chr(32), vbBinaryCompare) > 0, "`" & sTXT & "`", sTXT)
 End Property
 
-'Преобразование значения Null в Empty
+'РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ Р·РЅР°С‡РµРЅРёСЏ Null РІ Empty
 Private Property Get cNullToEmpty$(ByRef val)
     If IsNull(val) Then cNullToEmpty = Empty Else cNullToEmpty = val
 End Property
 
-'Сброс значений переменных
+'РЎР±СЂРѕСЃ Р·РЅР°С‡РµРЅРёР№ РїРµСЂРµРјРµРЅРЅС‹С…
 Private Sub DeleteParam()
     Set coll_select_flds = New Collection
     Set coll_fields_name = New Collection

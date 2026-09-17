@@ -2,45 +2,45 @@ Attribute VB_Name = "UpdateTable"
 Option Explicit
 
 '======================================================
-'Все настройки и логика работы таблицы База данных
-'по элементам, а также сводной таблице по данному файлу
-'находятся в классе CL_THISWORKBOOK
+'Р’СЃРµ РЅР°СЃС‚СЂРѕР№РєРё Рё Р»РѕРіРёРєР° СЂР°Р±РѕС‚С‹ С‚Р°Р±Р»РёС†С‹ Р‘Р°Р·Р° РґР°РЅРЅС‹С…
+'РїРѕ СЌР»РµРјРµРЅС‚Р°Рј, Р° С‚Р°РєР¶Рµ СЃРІРѕРґРЅРѕР№ С‚Р°Р±Р»РёС†Рµ РїРѕ РґР°РЅРЅРѕРјСѓ С„Р°Р№Р»Сѓ
+'РЅР°С…РѕРґСЏС‚СЃСЏ РІ РєР»Р°СЃСЃРµ CL_THISWORKBOOK
 '======================================================
 
 '======================================================
-'Все настройки и логика обработки данных таблицы
-'мастер файл находятся в классе CL_MF_MONT_TSB
+'Р’СЃРµ РЅР°СЃС‚СЂРѕР№РєРё Рё Р»РѕРіРёРєР° РѕР±СЂР°Р±РѕС‚РєРё РґР°РЅРЅС‹С… С‚Р°Р±Р»РёС†С‹
+'РјР°СЃС‚РµСЂ С„Р°Р№Р» РЅР°С…РѕРґСЏС‚СЃСЏ РІ РєР»Р°СЃСЃРµ CL_MF_MONT_TSB
 '======================================================
 
 '======================================================
-'Все настройки и логика обработки данных таблицы входного
-'контроля находятся в классе CL_INPUTCONTROL
+'Р’СЃРµ РЅР°СЃС‚СЂРѕР№РєРё Рё Р»РѕРіРёРєР° РѕР±СЂР°Р±РѕС‚РєРё РґР°РЅРЅС‹С… С‚Р°Р±Р»РёС†С‹ РІС…РѕРґРЅРѕРіРѕ
+'РєРѕРЅС‚СЂРѕР»СЏ РЅР°С…РѕРґСЏС‚СЃСЏ РІ РєР»Р°СЃСЃРµ CL_INPUTCONTROL
 '======================================================
 
 Public Const debug_mode As Boolean = False
 
-'Переменные макроса
-Private THWB As New CL_THISWORKBOOK     'Экземпляр класса этой книги
+'РџРµСЂРµРјРµРЅРЅС‹Рµ РјР°РєСЂРѕСЃР°
+Private THWB As New CL_THISWORKBOOK     'Р­РєР·РµРјРїР»СЏСЂ РєР»Р°СЃСЃР° СЌС‚РѕР№ РєРЅРёРіРё
 Private update_mode As Byte
 
-'Список выбираемых индексов столбцов
+'РЎРїРёСЃРѕРє РІС‹Р±РёСЂР°РµРјС‹С… РёРЅРґРµРєСЃРѕРІ СЃС‚РѕР»Р±С†РѕРІ
 Public Enum col_select
     column_aosr
     column_diagram
 End Enum
 
 
-'Установка режима обновления
+'РЈСЃС‚Р°РЅРѕРІРєР° СЂРµР¶РёРјР° РѕР±РЅРѕРІР»РµРЅРёСЏ
 Public Property Let SetUpdMode(i_mode As Byte)
     update_mode = i_mode
 End Property
 
-'Массив уникальных значений в выбранном столбце для выпадающего титула
+'РњР°СЃСЃРёРІ СѓРЅРёРєР°Р»СЊРЅС‹С… Р·РЅР°С‡РµРЅРёР№ РІ РІС‹Р±СЂР°РЅРЅРѕРј СЃС‚РѕР»Р±С†Рµ РґР»СЏ РІС‹РїР°РґР°СЋС‰РµРіРѕ С‚РёС‚СѓР»Р°
 Public Property Get MassUniqueVal(ByRef column_select As col_select)
     MassUniqueVal = THWB.GetMassUniqueVal(column_select)
 End Property
 
-'Поиск инспекций в файле выгрузки из аис-нск
+'РџРѕРёСЃРє РёРЅСЃРїРµРєС†РёР№ РІ С„Р°Р№Р»Рµ РІС‹РіСЂСѓР·РєРё РёР· Р°РёСЃ-РЅСЃРє
 Public Sub SearchInspData(ByRef sKey$, ByRef iRow&)
 
     If THWB.DictDataInsp Is Nothing Then
@@ -52,7 +52,7 @@ Public Sub SearchInspData(ByRef sKey$, ByRef iRow&)
     THWB.SearchInspData sKey, iRow
 End Sub
 
-'Таблица к САПР программе
+'РўР°Р±Р»РёС†Р° Рє РЎРђРџР  РїСЂРѕРіСЂР°РјРјРµ
 Public Sub CadSpec(ByRef sNumberDoc$)
     
     Dim CAD As New CL_CAD_SPECIFICATION
@@ -72,30 +72,30 @@ Public Sub CadSpec(ByRef sNumberDoc$)
     
 End Sub
 
-'Приложение к реестру №4
+'РџСЂРёР»РѕР¶РµРЅРёРµ Рє СЂРµРµСЃС‚СЂСѓ в„–4
 Public Sub RegP03(ByRef sNumberDoc$)
     
     Dim REG3 As New CL_REGISTRY_P03
-    Dim dict_ic As Object   'Данные из файлов входного контроля
+    Dim dict_ic As Object   'Р”Р°РЅРЅС‹Рµ РёР· С„Р°Р№Р»РѕРІ РІС…РѕРґРЅРѕРіРѕ РєРѕРЅС‚СЂРѕР»СЏ
     Dim mass(), tmpdict As Object, sFile$
     
     sFile = FileDialog_SaveAs(sNumberDoc & ".xlsx")
     If sFile = "" Then Exit Sub
     
-    Set tmpdict = REG3.GetDownLoadedList(sNumberDoc) 'Список загружаемых параметров
+    Set tmpdict = REG3.GetDownLoadedList(sNumberDoc) 'РЎРїРёСЃРѕРє Р·Р°РіСЂСѓР¶Р°РµРјС‹С… РїР°СЂР°РјРµС‚СЂРѕРІ
     
-    'Данные из файлов входного контроля
+    'Р”Р°РЅРЅС‹Рµ РёР· С„Р°Р№Р»РѕРІ РІС…РѕРґРЅРѕРіРѕ РєРѕРЅС‚СЂРѕР»СЏ
     Dim IC As New CL_INPUTCONTROLS
-    IC.SetMassLoaded_Title = tmpdict.items()(0) 'Массив загружаемых титулов
-    IC.SetListLoaded_DP = tmpdict.items()(1)    'Массив загружаемых dp
+    IC.SetMassLoaded_Title = tmpdict.items()(0) 'РњР°СЃСЃРёРІ Р·Р°РіСЂСѓР¶Р°РµРјС‹С… С‚РёС‚СѓР»РѕРІ
+    IC.SetListLoaded_DP = tmpdict.items()(1)    'РњР°СЃСЃРёРІ Р·Р°РіСЂСѓР¶Р°РµРјС‹С… dp
     IC.LoadData
     Set dict_ic = IC.DictData
     Set IC = Nothing
     
-    'Сопоставление данных ведомости с данными входного контроля
+    'РЎРѕРїРѕСЃС‚Р°РІР»РµРЅРёРµ РґР°РЅРЅС‹С… РІРµРґРѕРјРѕСЃС‚Рё СЃ РґР°РЅРЅС‹РјРё РІС…РѕРґРЅРѕРіРѕ РєРѕРЅС‚СЂРѕР»СЏ
     REG3.SearchInputControl dict_ic
     
-    'Массив таблицы
+    'РњР°СЃСЃРёРІ С‚Р°Р±Р»РёС†С‹
     mass = REG3.GetMassRegistry
     
     Application.ScreenUpdating = False
@@ -112,42 +112,42 @@ Public Sub RegP03(ByRef sNumberDoc$)
     
 End Sub
 
-'Диалоговое окно для выбора каталога сохранения
+'Р”РёР°Р»РѕРіРѕРІРѕРµ РѕРєРЅРѕ РґР»СЏ РІС‹Р±РѕСЂР° РєР°С‚Р°Р»РѕРіР° СЃРѕС…СЂР°РЅРµРЅРёСЏ
 Private Function FileDialog_SaveAs$(ByRef sFile$)
     Dim val, sInitFilename$
     sInitFilename = Environ("USERPROFILE") & "\Desktop\" & sFile
     val = Application.GetSaveAsFilename(InitialFileName:=sInitFilename, _
         FileFilter:="Excel Files (*.xlsx), *.xlsx", _
-        Title:="Выберите куда сохранить файл: " & sFile, _
-        ButtonText:="Сохранить")
+        Title:="Р’С‹Р±РµСЂРёС‚Рµ РєСѓРґР° СЃРѕС…СЂР°РЅРёС‚СЊ С„Р°Р№Р»: " & sFile, _
+        ButtonText:="РЎРѕС…СЂР°РЅРёС‚СЊ")
     If val = False Then Exit Function
     FileDialog_SaveAs = val
 End Function
 
 
-'Стартовая точка макроса по обновлению таблицы базы данных по элементам металла
+'РЎС‚Р°СЂС‚РѕРІР°СЏ С‚РѕС‡РєР° РјР°РєСЂРѕСЃР° РїРѕ РѕР±РЅРѕРІР»РµРЅРёСЋ С‚Р°Р±Р»РёС†С‹ Р±Р°Р·С‹ РґР°РЅРЅС‹С… РїРѕ СЌР»РµРјРµРЅС‚Р°Рј РјРµС‚Р°Р»Р»Р°
 Public Sub Prog001()
     
-    Dim dict_mf As Object   'Данные из мастер файла
-    Dim dict_pv As Object   'Данные из мастер файла для сводной
-    Dim dict_ic As Object   'Данные из файлов входного контроля
-    Dim dict_in As Object   'Данные из файла инспекции (аис-нск)
+    Dim dict_mf As Object   'Р”Р°РЅРЅС‹Рµ РёР· РјР°СЃС‚РµСЂ С„Р°Р№Р»Р°
+    Dim dict_pv As Object   'Р”Р°РЅРЅС‹Рµ РёР· РјР°СЃС‚РµСЂ С„Р°Р№Р»Р° РґР»СЏ СЃРІРѕРґРЅРѕР№
+    Dim dict_ic As Object   'Р”Р°РЅРЅС‹Рµ РёР· С„Р°Р№Р»РѕРІ РІС…РѕРґРЅРѕРіРѕ РєРѕРЅС‚СЂРѕР»СЏ
+    Dim dict_in As Object   'Р”Р°РЅРЅС‹Рµ РёР· С„Р°Р№Р»Р° РёРЅСЃРїРµРєС†РёРё (Р°РёСЃ-РЅСЃРє)
     
     If Not Attention Then Exit Sub
     
-    Dim t!: t = Timer  'Запуск таймера работы макроса
+    Dim t!: t = Timer  'Р—Р°РїСѓСЃРє С‚Р°Р№РјРµСЂР° СЂР°Р±РѕС‚С‹ РјР°РєСЂРѕСЃР°
     
     If Not debug_mode Then On Error GoTo Error
     
-    'Данные из мастер файла МК
+    'Р”Р°РЅРЅС‹Рµ РёР· РјР°СЃС‚РµСЂ С„Р°Р№Р»Р° РњРљ
     Dim MFMK As New CL_MF_MONT
-    MFMK.LoadData 'Загрузка данных из мастер файла
+    MFMK.LoadData 'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· РјР°СЃС‚РµСЂ С„Р°Р№Р»Р°
     Set dict_mf = MFMK.DictData
     Set dict_pv = MFMK.dictDataDP
     Set MFMK = Nothing
     
     
-    'Данные инспекций монтажа аий-нск
+    'Р”Р°РЅРЅС‹Рµ РёРЅСЃРїРµРєС†РёР№ РјРѕРЅС‚Р°Р¶Р° Р°РёР№-РЅСЃРє
     If update_mode = 2 Then GoTo skip_load_inspection
     Dim INSP As New CL_INSPECTION
     INSP.LoadData
@@ -155,7 +155,7 @@ Public Sub Prog001()
     Set INSP = Nothing
 skip_load_inspection:
     
-    'Обновление базы данных по элементам
+    'РћР±РЅРѕРІР»РµРЅРёРµ Р±Р°Р·С‹ РґР°РЅРЅС‹С… РїРѕ СЌР»РµРјРµРЅС‚Р°Рј
     If update_mode = 2 Then GoTo skip_load_updatetable
     Set THWB.DictData = dict_mf
     Set THWB.DictDataInsp = dict_in
@@ -163,18 +163,18 @@ skip_load_inspection:
     Set THWB = Nothing
 skip_load_updatetable:
     
-    'Данные из файлов входного контроля
+    'Р”Р°РЅРЅС‹Рµ РёР· С„Р°Р№Р»РѕРІ РІС…РѕРґРЅРѕРіРѕ РєРѕРЅС‚СЂРѕР»СЏ
     If update_mode = 1 Then GoTo skip_load_inputcontrols
     Dim IC As New CL_INPUTCONTROLS
     Set IC.DictData = dict_pv
-    IC.LoadData2    'Загрузка данных из файлов входного контроля ADO
-    'IC.LoadData    'Загрузка данных из файлов входного контроля WB.Open
+    IC.LoadData2    'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· С„Р°Р№Р»РѕРІ РІС…РѕРґРЅРѕРіРѕ РєРѕРЅС‚СЂРѕР»СЏ ADO
+    'IC.LoadData    'Р—Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РёР· С„Р°Р№Р»РѕРІ РІС…РѕРґРЅРѕРіРѕ РєРѕРЅС‚СЂРѕР»СЏ WB.Open
     Set dict_ic = IC.DictData
     Set IC = Nothing
 skip_load_inputcontrols:
     
     
-    'Данные из файла геодезии
+    'Р”Р°РЅРЅС‹Рµ РёР· С„Р°Р№Р»Р° РіРµРѕРґРµР·РёРё
     If update_mode = 1 Then GoTo skip_load_geodetic
     Dim GEO As New CL_GEODETIC
     Set GEO.DictData = dict_pv
@@ -183,7 +183,7 @@ skip_load_inputcontrols:
 skip_load_geodetic:
     
     
-    'Создание сводной таблицы
+    'РЎРѕР·РґР°РЅРёРµ СЃРІРѕРґРЅРѕР№ С‚Р°Р±Р»РёС†С‹
     If update_mode = 1 Then GoTo skip_load_pivottable
     Dim PVT As New CL_PIVOT
     Set PVT.DictDataMF = dict_pv
@@ -193,52 +193,52 @@ skip_load_geodetic:
     Set PVT = Nothing
 skip_load_pivottable:
 
-    'Очистка переменных
+    'РћС‡РёСЃС‚РєР° РїРµСЂРµРјРµРЅРЅС‹С…
     Set dict_mf = Nothing
     Set dict_pv = Nothing
     Set dict_ic = Nothing
     Set dict_in = Nothing
     
-    Debug.Print "Работа макроса завершена"
+    Debug.Print "Р Р°Р±РѕС‚Р° РјР°РєСЂРѕСЃР° Р·Р°РІРµСЂС€РµРЅР°"
     
-    MsgBox "Обновление завершено." & Chr(10) & "Время работы макроса: " & _
+    MsgBox "РћР±РЅРѕРІР»РµРЅРёРµ Р·Р°РІРµСЂС€РµРЅРѕ." & Chr(10) & "Р’СЂРµРјСЏ СЂР°Р±РѕС‚С‹ РјР°РєСЂРѕСЃР°: " & _
         Format((Timer - t) / 86400, "Long Time") & Chr(10), _
-        vbInformation, "Информация"
+        vbInformation, "РРЅС„РѕСЂРјР°С†РёСЏ"
         
 Exit Sub
 Error: UserExeption Err
 End Sub
 
-'Вывод сообщения при запуске макроса обновления
+'Р’С‹РІРѕРґ СЃРѕРѕР±С‰РµРЅРёСЏ РїСЂРё Р·Р°РїСѓСЃРєРµ РјР°РєСЂРѕСЃР° РѕР±РЅРѕРІР»РµРЅРёСЏ
 Private Function Attention() As Boolean
     Dim sTXT$, Answer As Byte
-    sTXT = "Обновление занимает много времени." & Chr(10)
-    sTXT = sTXT & "Вы действительно хотите обновить?" & Chr(10)
+    sTXT = "РћР±РЅРѕРІР»РµРЅРёРµ Р·Р°РЅРёРјР°РµС‚ РјРЅРѕРіРѕ РІСЂРµРјРµРЅРё." & Chr(10)
+    sTXT = sTXT & "Р’С‹ РґРµР№СЃС‚РІРёС‚РµР»СЊРЅРѕ С…РѕС‚РёС‚Рµ РѕР±РЅРѕРІРёС‚СЊ?" & Chr(10)
     sTXT = sTXT & String(60, "-") & Chr(10)
-    If update_mode = 0 Or update_mode = 1 Then sTXT = sTXT & Chr(149) & " " & Лист1.Name & Chr(10)
-    If update_mode = 0 Or update_mode = 2 Then sTXT = sTXT & Chr(149) & " " & Лист2.Name & Chr(10)
+    If update_mode = 0 Or update_mode = 1 Then sTXT = sTXT & Chr(149) & " " & Р›РёСЃС‚1.Name & Chr(10)
+    If update_mode = 0 Or update_mode = 2 Then sTXT = sTXT & Chr(149) & " " & Р›РёСЃС‚2.Name & Chr(10)
     
     sTXT = sTXT & String(60, "-") & Chr(10)
     
-    sTXT = sTXT & "Рекомендации для обновления:" & Chr(10)
-    sTXT = sTXT & Chr(149) & " Сделать копию данного файла на случай, если что-то пойдет не по плану." & Chr(10)
-    sTXT = sTXT & Chr(149) & " Сохранить (А лучше сохранить и закрыть) все прочие Ваши таблицы EXCEL." & Chr(10)
+    sTXT = sTXT & "Р РµРєРѕРјРµРЅРґР°С†РёРё РґР»СЏ РѕР±РЅРѕРІР»РµРЅРёСЏ:" & Chr(10)
+    sTXT = sTXT & Chr(149) & " РЎРґРµР»Р°С‚СЊ РєРѕРїРёСЋ РґР°РЅРЅРѕРіРѕ С„Р°Р№Р»Р° РЅР° СЃР»СѓС‡Р°Р№, РµСЃР»Рё С‡С‚Рѕ-С‚Рѕ РїРѕР№РґРµС‚ РЅРµ РїРѕ РїР»Р°РЅСѓ." & Chr(10)
+    sTXT = sTXT & Chr(149) & " РЎРѕС…СЂР°РЅРёС‚СЊ (Рђ Р»СѓС‡С€Рµ СЃРѕС…СЂР°РЅРёС‚СЊ Рё Р·Р°РєСЂС‹С‚СЊ) РІСЃРµ РїСЂРѕС‡РёРµ Р’Р°С€Рё С‚Р°Р±Р»РёС†С‹ EXCEL." & Chr(10)
     sTXT = sTXT & String(60, "-") & Chr(10)
     
-    sTXT = sTXT & ">> этот файл:" & ThisWorkbook.Name & " <<" & Chr(10)
+    sTXT = sTXT & ">> СЌС‚РѕС‚ С„Р°Р№Р»:" & ThisWorkbook.Name & " <<" & Chr(10)
     sTXT = sTXT & ">> " & Application.OperatingSystem
-    sTXT = sTXT & " Версия EXCEL: " & Application.Version & " <<" & Chr(10)
+    sTXT = sTXT & " Р’РµСЂСЃРёСЏ EXCEL: " & Application.Version & " <<" & Chr(10)
     
     sTXT = sTXT & String(60, "-") & Chr(10)
     
-    sTXT = sTXT & "Да   - Обновить." & Chr(10)
-    sTXT = sTXT & "Нет - Не обновлять." & Chr(10)
+    sTXT = sTXT & "Р”Р°   - РћР±РЅРѕРІРёС‚СЊ." & Chr(10)
+    sTXT = sTXT & "РќРµС‚ - РќРµ РѕР±РЅРѕРІР»СЏС‚СЊ." & Chr(10)
     
-    Answer = MsgBox(sTXT, vbInformation + vbDefaultButton2 + vbYesNo, "Требуется действие пользователя")
+    Answer = MsgBox(sTXT, vbInformation + vbDefaultButton2 + vbYesNo, "РўСЂРµР±СѓРµС‚СЃСЏ РґРµР№СЃС‚РІРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ")
     If Answer = 6 Then Attention = True
 End Function
 
-'Процедура обработки debug ошибок макроса
+'РџСЂРѕС†РµРґСѓСЂР° РѕР±СЂР°Р±РѕС‚РєРё debug РѕС€РёР±РѕРє РјР°РєСЂРѕСЃР°
 Private Sub UserExeption(ByRef Er As ErrObject)
     
     Application.ScreenUpdating = True
@@ -246,17 +246,17 @@ Private Sub UserExeption(ByRef Er As ErrObject)
     Application.StatusBar = False
     
     Select Case Er.Number
-        Case 510: Er.Description = "Не найден файл: " & Er.Source
-        Case 511: Er.Description = "Не найден файл журнала входного контроля: " & Er.Source
-        Case 512: Er.Description = "Не найден каталог входного контроля: " & Er.Source
-        Case 513: Er.Description = "Не найден файл данных геодезии: " & Er.Source
+        Case 510: Er.Description = "РќРµ РЅР°Р№РґРµРЅ С„Р°Р№Р»: " & Er.Source
+        Case 511: Er.Description = "РќРµ РЅР°Р№РґРµРЅ С„Р°Р№Р» Р¶СѓСЂРЅР°Р»Р° РІС…РѕРґРЅРѕРіРѕ РєРѕРЅС‚СЂРѕР»СЏ: " & Er.Source
+        Case 512: Er.Description = "РќРµ РЅР°Р№РґРµРЅ РєР°С‚Р°Р»РѕРі РІС…РѕРґРЅРѕРіРѕ РєРѕРЅС‚СЂРѕР»СЏ: " & Er.Source
+        Case 513: Er.Description = "РќРµ РЅР°Р№РґРµРЅ С„Р°Р№Р» РґР°РЅРЅС‹С… РіРµРѕРґРµР·РёРё: " & Er.Source
     End Select
     
     Dim sTXT$
-    sTXT = "Макрос завершился с ошибкой." & Chr(10)
+    sTXT = "РњР°РєСЂРѕСЃ Р·Р°РІРµСЂС€РёР»СЃСЏ СЃ РѕС€РёР±РєРѕР№." & Chr(10)
     sTXT = sTXT & Er.Description & IIf(Er.Source <> "", Chr(10) & Er.Source, "")
     
-    MsgBox sTXT, vbCritical, "ОШИБКА (№" & Er.Number & ")"
+    MsgBox sTXT, vbCritical, "РћРЁРР‘РљРђ (в„–" & Er.Number & ")"
     
     End
     
