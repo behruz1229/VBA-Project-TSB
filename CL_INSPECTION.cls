@@ -12,7 +12,7 @@ Option Explicit
 
 'Настройки файла:
 Private Const mask_file$ = "инспекции"
-Private Const sFolder$ = "\\vls.lan\ULVZG-DFS\ПТС\1.14. ТСБ и МОТ_Исполнительная документация КМ\!Ведомость элементов"
+Private Const sFolder$ = "~\!Ведомость элементов"
 
 'Настройки таблицы:
 Private Const sheet_name$ = "Инспекции"
