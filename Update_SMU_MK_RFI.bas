@@ -2,7 +2,7 @@ Option Explicit
 
 Sub Update_SMU_MK_RFI()
     ' --- ОБЪЯВЛЕНИЯ И КОНСТАНТЫ ---
-    Const DEFAULT_SRC_PATH As String = "D:\Users\saidakhmedovbb\Desktop\trash\Ведомость элементов МК ТСБ-СМУ.xlsb" ' <--- ИЗМЕНИТЕ ПУТЬ
+    Const DEFAULT_SRC_PATH As String = "~\Ведомость элементов МК ТСБ-СМУ.xlsb" ' <--- путь к файлу
     Const DEST_SHEET_NAME As String = "База данных по элементам"
     Const SRC_SHEET_NAME As String = "База данных по элементам"
     
