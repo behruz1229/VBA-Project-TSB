@@ -11,7 +11,7 @@ Option Explicit
 
 'Настройки таблицы входного контроля
 Private Const mask_file$ = "геодезия сводная"
-Private Const sFolder$ = "\\vls.lan\ULVZG-DFS\ПТС\1.14. ТСБ и МОТ_Исполнительная документация КМ\!Ведомость элементов"
+Private Const sFolder$ = "~\!Ведомость элементов" путь к папке
 
 Private Const sheet_name$ = "Сводная"       'Имя листа на которой таблица
 Private Const start_row As Byte = 2
